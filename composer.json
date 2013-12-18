@@ -1,0 +1,22 @@
+{
+        "name": "yarri/LinkFinder",
+        "type": "library",
+        "description": "In a plain text document searches for URLs and e-mails and makes them clickable",
+        "keywords": ["url", "email", "e-mail", "link"],
+        "homepage": "https://github.com/yarri/LinkFinder",
+        "license": ["MIT"],
+        "authors": [
+                {
+                        "name": "Jaromir Tomek",
+                        "homepage": "https://github.com/yarri"
+                }
+        ],
+        "require": {
+                "php": ">=5.0.0"
+        },
+        "require-dev": {
+        },
+        "autoload": {
+                "classmap": ["src"]
+        }
+}
