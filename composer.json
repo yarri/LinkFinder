@@ -1,5 +1,5 @@
 {
-        "name": "yarri/LinkFinder",
+        "name": "yarri/link-finder",
         "type": "library",
         "description": "In a plain text document searches for URLs and e-mails and makes them clickable",
         "keywords": ["url", "email", "e-mail", "link"],
