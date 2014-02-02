@@ -16,7 +16,9 @@ class TcLinkFinder extends TcBase{
 			"www.example.com/article.pl?id=123;format=raw" => "http://www.example.com/article.pl?id=123;format=raw",
 			"www.www.example.intl" => "http://www.www.example.intl",
 
-			"ftp://example.com/public/" => "ftp://example.com/public/"
+			"ftp://example.com/public/" => "ftp://example.com/public/",
+
+			//"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898", // TODO:
 		);
 
 		$templates = array(
