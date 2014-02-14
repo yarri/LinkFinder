@@ -5,8 +5,12 @@ LinkFinder is a PHP class. In a plain text document the LinkFinder searches for 
 
 ```php
 $lf = new LinkFinder();
-echo $lf->Process('Welcome at www.example.com! Contact us on info@example.com.');
-// Welcome at <a href="http://www.example.com/">www.example.com</a>! Contact us on <a href="mailto:info@example.com">info@example.com</a>.
+echo $lf->process('Welcome at www.example.com!
+Contact us on info@example.com.');
+
+// ... this prints out
+// Welcome at <a href="http://www.example.com/">www.example.com</a>!
+// Contact us on <a href="mailto:info@example.com">info@example.com</a>.
 ```
 
 The best way how to install LinkFinder is to download a latest version from Github...
