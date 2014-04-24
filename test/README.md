@@ -1,4 +1,4 @@
-You need run_unit_tests test from ATK14 Framework to run tests
+To run tests you have to use a script run_unit_tests from ATK14 Framework.
 
 In this directory just run:
 
