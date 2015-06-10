@@ -73,8 +73,11 @@ class LinkFinder{
 	* @param string $text					vstupni text
 	* @return string
 	*/
-	function process($text){
+	function process($text,$options = array()){
 		settype($text,"string");
+		$options += array(
+			"escape_html_entities" => true,
+		);
 
 		$_blank = "";
 		if($this->_OpenLinkInNewWindow){
@@ -89,6 +92,18 @@ class LinkFinder{
 			$_mailto_class = " class=\"$this->_MailtoClass\"";
 		}
 
+		if($options["escape_html_entities"]){
+			$rnd = uniqid();
+			$tr_table = array(
+				"&amp;" => "Xampicek{$rnd}X",
+				"&lt;" => " .._XltX{$rnd}_.. ",
+				"&gt;" => " .._XgtX{$rnd}_.. ",
+			);
+			$tr_table_rev = array_combine(array_values($tr_table),array_keys($tr_table));
+
+			$text = $this->_escapeHtmlEntities($text);
+			$text = strtr($text,$tr_table);
+		}
 
 		// novy kod - odstranuje tecku na konci url
 		$replace_ar = array();
@@ -122,7 +137,7 @@ class LinkFinder{
 		preg_match_all("/([_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})/i", $text, $matches);
 		for($i=0;$i<sizeof($matches[1]);$i++){
 			$key = trim($matches[1][$i]);
-			//odstrsaneni tecky na konci odkazu - je to pravdepodobne konec vety
+			//odstraneni tecky na konci odkazu - je to pravdepodobne konec vety
 			$key = preg_replace("/\\.$/","",$key);
 			$replace_ar[$key] = strtr($this->_MailtoTemplate,array(
 				"%mailto%" => $key, 
@@ -132,6 +147,22 @@ class LinkFinder{
 		}
 
 		$text = strtr($text,$replace_ar);
+
+		if($options["escape_html_entities"]){
+			$text = strtr($text,$tr_table_rev);
+		}
+
 		return $text;
+	}
+
+	protected function _escapeHtmlEntities($text){
+		$flags =  ENT_COMPAT;
+		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
+
+ 		// as of PHP5.4 the default encoding is UTF-8, it causes troubles in non UTF-8 applications,
+		// I think that the encoding ISO-8859-1 works well in UTF-8 applications
+		$encoding = "ISO-8859-1";
+
+		return htmlspecialchars($text,$flags,$encoding);
 	}
 }

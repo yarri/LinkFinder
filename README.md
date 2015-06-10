@@ -17,6 +17,14 @@ echo $lf->process($text);
 //  Contact us on <a href="mailto:info@example.com">info@example.com</a>.
 ```
 
+Escaping of HTML entities is enabled by default:
+
+```php
+$text = 'Find more at www.ourstore.com <http://www.ourstore.com/>';
+echo $lf->process($text);
+// Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;
+```
+
 The best way how to install LinkFinder is to download a latest version from Github...
 ```bash
 wget https://raw.github.com/yarri/LinkFinder/master/src/link_finder.php
