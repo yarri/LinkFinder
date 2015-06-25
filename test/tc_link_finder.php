@@ -1,6 +1,10 @@
 <?php
 class TcLinkFinder extends TcBase{
 	function testBasicUsage(){
+		$src = 'Image: <img src="http://example.com/logo.gif" />, Url: www.ipsum.com';
+		$lf = new LinkFinder();
+		$this->assertEquals('Image: <img src="http://example.com/logo.gif" />, Url: <a href="http://www.ipsum.com">www.ipsum.com</a>',$lf->process($src,array("escape_html_entities" => false)));
+
 		$src = 'Lorem www.ipsum.com. dolor@sit.net. Thank you';
 		$lf = new LinkFinder();
 		$this->assertEquals('Lorem <a href="http://www.ipsum.com">www.ipsum.com</a>. <a href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',$lf->process($src));

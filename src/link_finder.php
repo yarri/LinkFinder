@@ -92,18 +92,29 @@ class LinkFinder{
 			$_mailto_class = " class=\"$this->_MailtoClass\"";
 		}
 
+		$rnd = uniqid();
+		$tr_table = $tr_table_rev = array();
 		if($options["escape_html_entities"]){
-			$rnd = uniqid();
+
+			$text = $this->_escapeHtmlEntities($text);
 			$tr_table = array(
 				"&amp;" => "Xampicek{$rnd}X",
 				"&lt;" => " .._XltX{$rnd}_.. ",
 				"&gt;" => " .._XgtX{$rnd}_.. ",
 			);
-			$tr_table_rev = array_combine(array_values($tr_table),array_keys($tr_table));
 
-			$text = $this->_escapeHtmlEntities($text);
-			$text = strtr($text,$tr_table);
+		}else{
+
+			// building replacements for existing tags
+			preg_match_all('/(<[a-z0-9]+(|\s[^<>]*)\/?>)/si',$text,$matches);
+			foreach($matches[1] as $i => $match){
+				$tr_table[$match] = ".._XtagX{$rnd}_.."; // My photo is here: <img src="http://example.com/image.jpg" /> -> My photo is here: .._XtagX1234_..
+			}
+
 		}
+		$text = strtr($text,$tr_table);
+		$tr_table_rev = array_combine(array_values($tr_table),array_keys($tr_table));
+
 
 		// novy kod - odstranuje tecku na konci url
 		$replace_ar = array();
@@ -148,9 +159,7 @@ class LinkFinder{
 
 		$text = strtr($text,$replace_ar);
 
-		if($options["escape_html_entities"]){
-			$text = strtr($text,$tr_table_rev);
-		}
+		$text = strtr($text,$tr_table_rev);
 
 		return $text;
 	}
