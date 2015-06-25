@@ -108,7 +108,7 @@ class LinkFinder{
 			// building replacements for existing tags
 			preg_match_all('/(<[a-z0-9]+(|\s[^<>]*)\/?>)/si',$text,$matches);
 			foreach($matches[1] as $i => $match){
-				$tr_table[$match] = ".._XtagX{$rnd}_.."; // My photo is here: <img src="http://example.com/image.jpg" /> -> My photo is here: .._XtagX1234_..
+				$tr_table[$match] = ".._XtagX{$rnd}.{$i}_.."; // My photo is here: <img src="http://example.com/image.jpg" /> -> My photo is here: .._XtagX1234_..
 			}
 
 		}
