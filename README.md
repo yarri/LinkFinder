@@ -1,7 +1,7 @@
 LinkFinder
 ==========
 
-LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and e-mail addresses and make them clickable.
+LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and e-mail addresses and makes them clickable.
 
 ```php
 $text = '
