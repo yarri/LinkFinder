@@ -1,7 +1,7 @@
 LinkFinder
 ==========
 
-LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and e-mail addresses and makes them clickable.
+LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable.
 
     $text = '
      Welcome at www.example.com!
@@ -32,6 +32,9 @@ The LinkFinder can be used for auto-creating links in a Markdown document:
     $lf = new LinkFinder(array("escape_html_entities" => false));
     echo $lf->process($html);
 
+Installation
+------------
+
 The best way how to install LinkFinder is to use a Composer:
 
     composer require yarri/link-finder dev-master
@@ -39,3 +42,8 @@ The best way how to install LinkFinder is to use a Composer:
 od just download the latest version from Github:
 
     wget https://raw.github.com/yarri/LinkFinder/master/src/link_finder.php
+
+License
+-------
+
+LinkFinder is free software distributed [under the terms of the MIT license](http://www.opensource.org/licenses/mit-license)

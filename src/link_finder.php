@@ -9,6 +9,8 @@
  *
  * Original regular expressions has been taken from a function html_activate_links() by Fredrik Kristiansen (russlndr at online.no) and
  * Albrecht Guenther (ag at phprojekt.de): http://www.zend.com/codex.php?id=395&single=1
+ *
+ * Source code of LinkFinder can be found at https://github.com/yarri/LinkFinder
  */
 class LinkFinder{
 
