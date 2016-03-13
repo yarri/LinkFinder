@@ -1,7 +1,7 @@
 {
         "name": "yarri/link-finder",
         "type": "library",
-        "description": "In a plain text document searches for URLs and e-mails and makes them clickable",
+        "description": "In a plain text document searches for URLs and emails and makes them clickable",
         "keywords": ["url", "email", "e-mail", "link"],
         "homepage": "https://github.com/yarri/LinkFinder",
         "license": ["MIT"],
