@@ -89,8 +89,9 @@ class LinkFinder{
 
 		}
 		$text = strtr($text,$tr_table);
-		$tr_table_rev = array_combine(array_values($tr_table),array_keys($tr_table));
 
+		// in PHP5.3 parameters of array_combine should have at least 1 element
+		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array();
 
 		// novy kod - odstranuje tecku na konci url
 		$replace_ar = array();
