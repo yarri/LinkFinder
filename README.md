@@ -2,6 +2,7 @@ LinkFinder
 ==========
 
 [![Build Status](https://travis-ci.org/yarri/LinkFinder.svg?branch=master)](https://travis-ci.org/yarri/LinkFinder)
+[![Downloads](https://img.shields.io/packagist/dt/yarri/link-finder.svg)](https://packagist.org/packages/yarri/link-finder)
 
 LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable.
 
