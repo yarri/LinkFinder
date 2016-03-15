@@ -18,6 +18,19 @@ LinkFinder is a PHP class. In a plain text document the LinkFinder searches for 
     //  Welcome at <a href="http://www.example.com/">www.example.com</a>!
     //  Contact us on <a href="mailto:info@example.com">info@example.com</a>.
 
+Extra attributes for ```<a>``` and ```<a href="mailto:...">``` elements can be specified in options:
+
+    $lf = new LinkFinder([
+      "attrs" => ["class" => "external-link", "target" => "_blank", "rel" => "nofollow"],
+      "mailto_attrs" => ["class" => "external-email"]
+    ]);
+    echo $lf->process($text);
+    
+    // ... this prints out
+    //  Welcome at <a class="external-link" href="http://www.example.com/" target="_blank" rel="nofollow">www.example.com</a>!
+    //  Contact us on <a class="external-email" href="mailto:info@example.com">info@example.com</a>.
+
+
 Escaping of HTML entities is enabled by default:
 
     $text = '
@@ -50,3 +63,5 @@ License
 -------
 
 LinkFinder is free software distributed [under the terms of the MIT license](http://www.opensource.org/licenses/mit-license)
+
+# vim: set et:

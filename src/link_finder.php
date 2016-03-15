@@ -7,6 +7,13 @@
  *   $lf = new LinkFinder();
  *   echo $lf->process('Welcome at www.example.com!'); // Welcome at <a href="http://www.example.com/">www.example.com</a>!
  *
+ * If you need something more:
+ *
+ *   $lf = new LinkFinder(array("attrs" => array("class" => "external-link", "rel" => "nofollow")));
+ *   echo $lf->process('Welcome at www.example.com!'); // Welcome at <a class="external-link" href="http://www.example.com/" rel="nofollow">www.example.com</a>!
+ *
+ * You may found More examples at https://github.com/yarri/LinkFinder 
+ *
  * Original regular expressions has been taken from a function html_activate_links() by Fredrik Kristiansen (russlndr at online.no) and
  * Albrecht Guenther (ag at phprojekt.de): http://www.zend.com/codex.php?id=395&single=1
  *
@@ -20,13 +27,19 @@ class LinkFinder{
 
 		// default options
 		$this->_Options = array(
-			"open_links_in_new_windows" => false,
+
+			// attributes for <a> and <a href="mailto:..."> elements
+			"attrs" => array(),
+			"mailto_attrs" => array(),
+
+			"escape_html_entities" => true,
+			"link_template" => '<a %attrs%>%url%</a>',
+			"mailto_template" => '<a %attrs%>%address%</a>',
+
+			// legacy options (try not to use them)
+			"open_links_in_new_windows" => null, // true, false
 			"link_class" => "",
 			"mailto_class" => "",
-			"escape_html_entities" => true,
-
-			"link_template" => '<a href="%href%"%class%%target%>%url%</a>',
-			"mailto_template" => '<a href="mailto:%mailto%"%class%>%address%</a>',
 		);
 
 		$this->_setOptions($options);
@@ -52,20 +65,8 @@ class LinkFinder{
 		settype($text,"string");
 
 		$options = $this->_getOptions($options);
-
-		$_blank = "";
-		if($options["open_links_in_new_windows"]){
-			$_blank = " target=\"_blank\"";
-		}
-
-		$_href_class = "";
-		if($options["link_class"]!=""){
-			$_href_class = " class=\"$options[link_class]\"";
-		}
-		$_mailto_class = "";
-		if($options["mailto_class"]!=""){
-			$_mailto_class = " class=\"$options[mailto_class]\"";
-		}
+		$attrs = $options["attrs"];
+		$mailto_attrs = $options["mailto_attrs"];
 
 		$rnd = uniqid();
 		$tr_table = $tr_table_rev = array();
@@ -100,35 +101,24 @@ class LinkFinder{
 		for($i=0;$i<sizeof($matches[1]);$i++){
 			$key = trim($matches[1][$i]);
 			$key = preg_replace("/\\.$/","",$key); // removing a dot at the of a link - it probably means end of the sentence
-			$replace_ar[$key] = strtr($options["link_template"],array(
-				"%href%" => $key,
-				"%url%" => $key,
-				"%class%" => $_href_class,
-				"%target%" => $_blank,
-			));
+			$attrs["href"] = $key;
+			$replace_ar[$key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
 		}
 
 		preg_match_all("/\b(www\\.[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]+)/i", $text, $matches);
 		for($i=0;$i<sizeof($matches[1]);$i++){
 			$key = trim($matches[1][$i]);
 			$key = preg_replace("/\\.$/","",$key); // removing a dot at the of a link - it probably means end of the sentence
-			$replace_ar[$key] = strtr($options["link_template"],array(
-				"%href%" => "http://$key",
-				"%url%" => $key,
-				"%class%" => $_href_class,
-				"%target%" => $_blank,
-			));
+			$attrs["href"] = "http://$key";
+			$replace_ar[$key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
 		}
 
 		// emails
 		preg_match_all("/([_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})/i", $text, $matches);
 		for($i=0;$i<sizeof($matches[1]);$i++){
 			$key = trim($matches[1][$i]);
-			$replace_ar[$key] = strtr($options["mailto_template"],array(
-				"%mailto%" => $key, 
-				"%address%" => $key,
-				"%class%" => $_mailto_class,
-			));
+			$mailto_attrs["href"] = "mailto:$key";
+			$replace_ar[$key] = $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $key));
 		}
 
 		$text = strtr($text,$replace_ar);
@@ -149,6 +139,42 @@ class LinkFinder{
 		return htmlspecialchars($text,$flags,$encoding);
 	}
 
+	protected function _renderTemplate($template,$attrs,$replaces){
+		ksort($attrs);
+
+		$_attrs = array();
+		foreach($attrs as $key => $value){
+			$_attrs[] = sprintf('%s="%s"',$key,$value);
+		}
+		$attrs_str = join(" ",$_attrs);
+
+		$out = strtr($template,array(
+			"%attrs%" => $attrs_str,
+		));
+
+		// Preparing keys for legacy templates:
+		//	<a href="%href%"%class%%target%>%url%</a>
+		//	<a href="mailto:%mailto%"%class%>%address%</a>
+		//
+		// TODO: to be removed
+		$replaces["%href%"] = $attrs["href"];
+		if(preg_match('/^mailto:(.*)/',$attrs["href"],$matches)){
+			$replaces["%mailto%"] = $matches[1];
+		}
+		$replaces["%target%"] = "";
+		if(isset($attrs["target"]) && strlen($attrs["target"])){
+			$replaces["%target%"] = " target=\"$attrs[target]\"";
+		}
+		$replaces["%class%"] = "";
+		if(isset($attrs["class"]) && strlen($attrs["class"])){
+			$replaces["%class%"] = " class=\"$attrs[class]\"";
+		}
+
+		$out = strtr($out,$replaces);
+
+		return $out;
+	}
+
 	protected function _setOptions($options){
 		$options += $this->_Options;
 		$this->_Options = $options;
@@ -160,6 +186,24 @@ class LinkFinder{
 
 	protected function _getOptions($options = array()){
 		$options += $this->_Options;
+
+		// Dealing with legacy options
+		//
+		// TODO: to be removed
+		if(strlen($options["link_class"])){
+			$options["attrs"]["class"] = $options["link_class"];
+		}
+		if(isset($options["open_links_in_new_windows"])){
+			if($options["open_links_in_new_windows"]){
+				$options["attrs"]["target"] = "_blank";
+			}else{
+				unset($options["attrs"]["target"]);
+			}
+		}
+		if(strlen($options["mailto_class"])){
+			$options["mailto_attrs"]["class"] = $options["mailto_class"];
+		}
+
 		return $options;
 	}
 }

@@ -5,27 +5,42 @@ class TcLinkFinder extends TcBase{
 
 		// a basic example
 		$src = 'Lorem www.ipsum.com. dolor@sit.net. Thank you';
-		$this->assertEquals('Lorem <a href="http://www.ipsum.com">www.ipsum.com</a>. <a href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',$lf->process($src));
+		$this->assertEquals(
+			'Lorem <a href="http://www.ipsum.com">www.ipsum.com</a>. <a href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
+			$lf->process($src)
+		);
 
 		//
 		$src = 'Image: <img src="http://example.com/logo.gif" />, Url: www.ipsum.com';
-		$this->assertEquals('Image: <img src="http://example.com/logo.gif" />, Url: <a href="http://www.ipsum.com">www.ipsum.com</a>',$lf->process($src,array("escape_html_entities" => false)));
+		$this->assertEquals(
+			'Image: <img src="http://example.com/logo.gif" />, Url: <a href="http://www.ipsum.com">www.ipsum.com</a>',
+			$lf->process($src,array("escape_html_entities" => false))
+		);
 
 		// auto escaping of HTML entities
 		$src = 'Lorem www.ipsum.com <http://www.ipsum.com/>.
 			Dolor: dolor@sit.new <dolor@sit.net>. Thank you';
-		$this->assertEquals('Lorem <a href="http://www.ipsum.com">www.ipsum.com</a> &lt;<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>&gt;.
-			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> &lt;<a href="mailto:dolor@sit.net">dolor@sit.net</a>&gt;. Thank you',$lf->process($src));
+		$this->assertEquals(
+			'Lorem <a href="http://www.ipsum.com">www.ipsum.com</a> &lt;<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>&gt;.
+			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> &lt;<a href="mailto:dolor@sit.net">dolor@sit.net</a>&gt;. Thank you',
+			$lf->process($src)
+		);
 
 		// disabling auto escaping may produce invalid markup
 		$src = 'Lorem www.ipsum.com <http://www.ipsum.com/>.
 			Dolor: dolor@sit.new <dolor@sit.net>. Thank you';
-		$this->assertEquals('Lorem <a href="http://www.ipsum.com">www.ipsum.com</a> <<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>>.
-			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> <<a href="mailto:dolor@sit.net">dolor@sit.net</a>>. Thank you',$lf->process($src,array("escape_html_entities" => false)));
+		$this->assertEquals(
+			'Lorem <a href="http://www.ipsum.com">www.ipsum.com</a> <<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>>.
+			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> <<a href="mailto:dolor@sit.net">dolor@sit.net</a>>. Thank you',
+			$lf->process($src,array("escape_html_entities" => false))
+		);
 
 		// an example from the README.md
 		$src = 'Find more at www.ourstore.com <http://www.ourstore.com/>';
-		$this->assertEquals('Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;',$lf->process($src));
+		$this->assertEquals(
+			'Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;',
+			$lf->process($src)
+		);
 
 		// source text contains a real link
 		$src = 'Find more at www.ourstore.com or click <a href="http://www.ourstore.com/contact">here</a> to contact us.';
@@ -38,22 +53,84 @@ class TcLinkFinder extends TcBase{
 	function testOptions(){
 		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
 		$lf = new LinkFinder(array(
-			"open_links_in_new_windows" => true,
-			"link_class" => "link",
-			"mailto_class" => "email",
+			"attrs" => array(
+				"class" => "link",
+				"target" => "_blank",
+			),
+			"mailto_attrs" => array(
+				"class" => "email",
+			),
 			"escape_html_entities" => false,
 		));
 
-		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lf->process($src));
+		$this->assertEquals(
+			'<em>Lorem</em> <a class="link" href="http://www.ipsum.com" target="_blank">www.ipsum.com</a>. <a class="email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
+			$lf->process($src)
+		);
+
+		$this->assertEquals(
+			'<em>Lorem</em> <a class="external-link" href="http://www.ipsum.com">www.ipsum.com</a>. <a class="email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
+			$lf->process($src,array("attrs" => array("class" => "external-link")))
+		);
+
+		$this->assertEquals(
+			'&lt;em&gt;Lorem&lt;/em&gt; <a class="article-link" href="http://www.ipsum.com">www.ipsum.com</a>. <a class="article-email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
+			$lf->process($src,array("attrs" => array("class" => "article-link"), "mailto_attrs" => array("class" =>  "article-email"), "escape_html_entities" => true))
+		);
+
+		$this->assertEquals(
+			'<em>Lorem</em> <a class="link" href="http://www.ipsum.com" target="_blank">www.ipsum.com</a>. <a class="email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
+			$lf->process($src)
+		);
+	}
+
+	function testLegacyUsage(){
+		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
+
+		$lf = new LinkFinder(array(
+			"open_links_in_new_windows" => true,
+			"escape_html_entities" => false,
+
+			"link_template" => '<a href="%href%"%class%%target%>%url%</a>',
+			"mailto_template" => '<a href="mailto:%mailto%"%class%>%address%</a>',
+
+			"link_class" => "link",
+			"mailto_class" => "email",
+		));
+		$this->assertEquals(
+			'<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			$lf->process($src)
+		);
 
 		$lf->setToOpenLinkInNewWindow(false);
 		$lf->setLinkClass("external-link");
 
-		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lf->process($src));
+		$this->assertEquals(
+			'<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			$lf->process($src)
+		);
 
-		$this->assertEquals('&lt;em&gt;Lorem&lt;/em&gt; <a href="http://www.ipsum.com" class="article-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="article-email">dolor@sit.net</a>. Thank you',$lf->process($src,array("link_class" => "article-link", "mailto_class" => "article-email", "escape_html_entities" => true)));
+		$this->assertEquals(
+			'&lt;em&gt;Lorem&lt;/em&gt; <a href="http://www.ipsum.com" class="article-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="article-email">dolor@sit.net</a>. Thank you',
+			$lf->process($src,array("link_class" => "article-link", "mailto_class" => "article-email", "escape_html_entities" => true))
+		);
 
-		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lf->process($src));
+		$this->assertEquals(
+			'<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			$lf->process($src)
+		);
+
+		$lf = new LinkFinder(array(
+			"open_links_in_new_windows" => true,
+			"escape_html_entities" => false,
+
+			"attrs" => array("class" => "link"),
+			"mailto_attrs" => array("class" => "email"),
+
+			"link_template" => '<a href="%href%"%class%%target%>%url%</a>',
+			"mailto_template" => '<a href="mailto:%mailto%"%class%>%address%</a>',
+		));
+		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lf->process($src));
 	}
 
 	function testLinks(){
