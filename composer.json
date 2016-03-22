@@ -2,7 +2,7 @@
         "name": "yarri/link-finder",
         "type": "library",
         "description": "In a plain text document searches for URLs and emails and makes them clickable",
-        "keywords": ["url", "email", "e-mail", "link"],
+        "keywords": ["url", "link", "urlize", "urlizer", "email", "e-mail"],
         "homepage": "https://github.com/yarri/LinkFinder",
         "license": ["MIT"],
         "authors": [
