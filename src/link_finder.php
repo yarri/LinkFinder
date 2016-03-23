@@ -100,7 +100,7 @@ class LinkFinder{
 		preg_match_all("/(((f|ht){1}tps?:\\/\\/)[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]+)/i", $text, $matches);
 		for($i=0;$i<sizeof($matches[1]);$i++){
 			$key = trim($matches[1][$i]);
-			$key = preg_replace("/\\.$/","",$key); // removing a dot at the of a link - it probably means end of the sentence
+			$key = preg_replace("/[.,;]+$/","",$key); // removing a dot(s) at the of a link - it probably means end of the sentence
 			$attrs["href"] = $key;
 			$replace_ar[$key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
 		}
@@ -108,7 +108,7 @@ class LinkFinder{
 		preg_match_all("/\b(www\\.[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]+)/i", $text, $matches);
 		for($i=0;$i<sizeof($matches[1]);$i++){
 			$key = trim($matches[1][$i]);
-			$key = preg_replace("/\\.$/","",$key); // removing a dot at the of a link - it probably means end of the sentence
+			$key = preg_replace("/[.,;]+$/","",$key); // removing a dot(s) at the of a link - it probably means end of the sentence
 			$attrs["href"] = "http://$key";
 			$replace_ar[$key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
 		}

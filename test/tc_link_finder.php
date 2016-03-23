@@ -48,6 +48,17 @@ class TcLinkFinder extends TcBase{
 			'Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> or click <a href="http://www.ourstore.com/contact">here</a> to contact us.',
 			$lf->process($src,array("escape_html_entities" => false))
 		);
+
+
+		$tr = array(
+			'url: www.domain.com, www.ourstore.com' => 'url: <a href="http://www.domain.com">www.domain.com</a>, <a href="http://www.ourstore.com">www.ourstore.com</a>',
+			'url: www.domain.com; www.ourstore.com' => 'url: <a href="http://www.domain.com">www.domain.com</a>; <a href="http://www.ourstore.com">www.ourstore.com</a>',
+			'just visit www.ourstore.com...' => 'just visit <a href="http://www.ourstore.com">www.ourstore.com</a>...',
+		);
+		foreach($tr as $src => $expected){
+			$this->assertEquals($expected,$lf->process($src),"source: $src");
+		}
+
 	}
 
 	function testOptions(){
