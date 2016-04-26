@@ -94,34 +94,20 @@ class LinkFinder{
 		// in PHP5.3 parameters of array_combine should have at least 1 element
 		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array();
 
-		// novy kod - odstranuje tecku na konci url
-		$replace_ar = array();
+		$this->__attrs = $attrs;
+		$this->__mailto_attrs = $mailto_attrs;
+		$this->__options = $options;
 
-		preg_match_all("/(((f|ht){1}tps?:\\/\\/)[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]+)/i", $text, $matches);
-		for($i=0;$i<sizeof($matches[1]);$i++){
-			$key = trim($matches[1][$i]);
-			$key = preg_replace("/[.,;]+$/","",$key); // removing a dot(s) at the of a link - it probably means end of the sentence
-			$attrs["href"] = $key;
-			$replace_ar[$key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
-		}
-
-		preg_match_all("/\b(www\\.[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]+)/i", $text, $matches);
-		for($i=0;$i<sizeof($matches[1]);$i++){
-			$key = trim($matches[1][$i]);
-			$key = preg_replace("/[.,;]+$/","",$key); // removing a dot(s) at the of a link - it probably means end of the sentence
-			$attrs["href"] = "http://$key";
-			$replace_ar[$key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
-		}
+		// urls
+		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]";
+		$text = preg_replace_callback("/\b(((f|ht){1}tps?:\\/\\/|www\\.)$url_allowed_chars+)/i",array($this,"_replaceLink"),$text);
 
 		// emails
-		preg_match_all("/([_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})/i", $text, $matches);
-		for($i=0;$i<sizeof($matches[1]);$i++){
-			$key = trim($matches[1][$i]);
-			$mailto_attrs["href"] = "mailto:$key";
-			$replace_ar[$key] = $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $key));
-		}
+		$text = preg_replace_callback("/([_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})/i",array($this,"_replaceEmail"),$text);
 
-		$text = strtr($text,$replace_ar);
+		unset($this->__attrs);
+		unset($this->__mailto_attrs);
+		unset($this->__options);
 
 		$text = strtr($text,$tr_table_rev);
 
@@ -205,5 +191,30 @@ class LinkFinder{
 		}
 
 		return $options;
+	}
+
+	protected function _replaceLink($matches){
+		$attrs = $this->__attrs;
+		$options = $this->__options;
+
+		$key = trim($matches[1]);
+		$tail = "";
+		if(preg_match("/^(.+?)([.,;]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
+			$key = $_matches[1];
+			$tail = $_matches[2];
+		}
+
+		$attrs["href"] = preg_match('/^www\./i',$key) ? "http://$key" : $key; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
+
+		return $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key)).$tail;
+	}
+
+	protected function _replaceEmail($matches){
+		$mailto_attrs = $this->__mailto_attrs;
+		$options = $this->__options;
+
+		$key = trim($matches[1]);
+		$mailto_attrs["href"] = "mailto:$key";
+		return $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $key));
 	}
 }
