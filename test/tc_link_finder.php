@@ -49,6 +49,15 @@ class TcLinkFinder extends TcBase{
 			$lf->process($src,array("escape_html_entities" => false))
 		);
 
+		// in source there is already a correct HTML link
+		$src = '<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>';
+		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>',$lf->process($src,array("escape_html_entities" => false)));
+
+		// a tag immediately after an URL
+		$src = '<p>Contact as on www.earth.net<br />
+or we@earth.net</p>';
+		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net">www.earth.net</a><br />
+or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("escape_html_entities" => false)));
 
 		$tr = array(
 			'url: www.domain.com, www.ourstore.com' => 'url: <a href="http://www.domain.com">www.domain.com</a>, <a href="http://www.ourstore.com">www.ourstore.com</a>',
