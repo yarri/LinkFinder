@@ -9,8 +9,7 @@ php:
   - 7.0
 
 before_install:
-  - sudo apt-get install php-pear
-  - sudo pear install --alldeps PHPUnit2
+  - composer global require "phpunit/phpunit=4.8.*"
 
 script:
   - cd test && wget -q -O - https://raw.github.com/atk14/Atk14/master/src/scripts/run_unit_tests | php
