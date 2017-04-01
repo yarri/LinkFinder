@@ -68,6 +68,16 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			$this->assertEquals($expected,$lf->process($src),"source: $src");
 		}
 
+		// URLs in quotes
+		// Steam sends strange formatted text in email address verification messages
+		$src = 'Sometimes in emails in text/plain parts not well formatted text occurs: <a href="http://www.click.me/now/">click here</a>';
+		$this->assertEquals('Sometimes in emails in text/plain parts not well formatted text occurs: &lt;a href=&quot;<a href="http://www.click.me/now/">http://www.click.me/now/</a>&quot;&gt;click here&lt;/a&gt;',$lf->process($src));
+		//
+		$src = "Sometimes in emails in text/plain parts not well formatted text occurs: <a href='http://www.click.me/now/'>click here</a>";
+		$this->assertEquals('Sometimes in emails in text/plain parts not well formatted text occurs: &lt;a href=\'<a href="http://www.click.me/now/">http://www.click.me/now/</a>\'&gt;click here&lt;/a&gt;',$lf->process($src));
+		//
+		$src = 'Link: "http://www.example.org/"';
+		$this->assertEquals('Link: "<a href="http://www.example.org/">http://www.example.org/</a>"',$lf->process($src,array("escape_html_entities" => false)));
 	}
 
 	function testOptions(){

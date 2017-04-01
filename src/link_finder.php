@@ -78,6 +78,7 @@ class LinkFinder{
 				"&amp;" => "Xampicek{$rnd}X",
 				"&lt;" => " .._XltX{$rnd}_.. ",
 				"&gt;" => " .._XgtX{$rnd}_.. ",
+				"&quot;" => " .._XquotX{$rnd}_.. ",
 			);
 
 		}else{
