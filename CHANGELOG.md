@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1] - 2017-04-01
+- Improvements and fixes in URL recognitions
+- Testing with PHPUnit 4.8
+
 ## [2.0] - 2016-03-15
 ### Added
 - Attributes for ```<a>``` and ```<a href="mailto:...">``` elements can be defined freely using option attrs and mailto_attrs (https://github.com/yarri/LinkFinder/issues/1).
