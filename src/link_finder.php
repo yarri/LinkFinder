@@ -110,7 +110,7 @@ class LinkFinder{
 		$text = preg_replace_callback("/\b(((f|ht){1}tps?:\\/\\/|www\\.)$url_allowed_chars+)/i",array($this,"_replaceLink"),$text);
 
 		// emails
-		$text = preg_replace_callback("/([_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})/i",array($this,"_replaceEmail"),$text);
+		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i",array($this,"_replaceEmail"),$text);
 
 		unset($this->__attrs);
 		unset($this->__mailto_attrs);
@@ -220,8 +220,14 @@ class LinkFinder{
 		$mailto_attrs = $this->__mailto_attrs;
 		$options = $this->__options;
 
-		$key = trim($matches[1]);
-		$mailto_attrs["href"] = "mailto:$key";
-		return $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $key));
+		$address = trim($matches["address"]);
+		$ending_interrupter = ($matches["ending_interrupter"]);
+
+		if(in_array($ending_interrupter,array(":"))){
+			return $matches[0];
+		}
+
+		$mailto_attrs["href"] = "mailto:$address";
+		return $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $address)).$ending_interrupter;
 	}
 }

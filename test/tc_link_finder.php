@@ -35,6 +35,10 @@ class TcLinkFinder extends TcBase{
 			$lf->process($src,array("escape_html_entities" => false))
 		);
 
+		// a git repository must not be interpreted as an email
+		$src = 'Source is located at git@github.com:yarri/LinkFinder.git';
+		$this->assertEquals('Source is located at git@github.com:yarri/LinkFinder.git',$lf->process($src));
+
 		// an example from the README.md
 		$src = 'Find more at www.ourstore.com <http://www.ourstore.com/>';
 		$this->assertEquals(
