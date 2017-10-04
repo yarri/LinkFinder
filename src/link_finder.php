@@ -12,7 +12,7 @@
  *   $lf = new LinkFinder(array("attrs" => array("class" => "external-link", "rel" => "nofollow")));
  *   echo $lf->process('Welcome at www.example.com!'); // Welcome at <a class="external-link" href="http://www.example.com/" rel="nofollow">www.example.com</a>!
  *
- * You may found More examples at https://github.com/yarri/LinkFinder 
+ * You may found More examples at https://github.com/yarri/LinkFinder
  *
  * Original regular expressions has been taken from a function html_activate_links() by Fredrik Kristiansen (russlndr at online.no) and
  * Albrecht Guenther (ag at phprojekt.de): http://www.zend.com/codex.php?id=395&single=1
@@ -104,6 +104,7 @@ class LinkFinder{
 		$this->__attrs = $attrs;
 		$this->__mailto_attrs = $mailto_attrs;
 		$this->__options = $options;
+		$this->__replaces = array();
 
 		// urls
 		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]";
@@ -112,9 +113,36 @@ class LinkFinder{
 		// emails
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i",array($this,"_replaceEmail"),$text);
 
+		// urls without leading www., http://, ...
+		$url_allowed_suffixes = array(
+			// Original top-level domains
+			"com",
+			"org",
+			"net",
+			"int",
+			"edu",
+			"gov",
+			"mil",
+
+			"us",
+			"cz",
+			"sk",
+			"uk",
+
+			// ICANN-era generic top-level domains
+			"info",
+			"name",
+			"biz",
+		);
+		$url_allowed_suffixes = "(".join("|",$url_allowed_suffixes).")";
+		$text = preg_replace_callback("/\b(([a-z0-9-]+\\.)+($url_allowed_suffixes)(|\/$url_allowed_chars+))\b/i",array($this,"_replaceLink"),$text);
+
+		$text = strtr($text,$this->__replaces);
+
 		unset($this->__attrs);
 		unset($this->__mailto_attrs);
 		unset($this->__options);
+		unset($this->__replaces);
 
 		$text = strtr($text,$tr_table_rev);
 
@@ -211,9 +239,13 @@ class LinkFinder{
 			$tail = $_matches[2];
 		}
 
-		$attrs["href"] = preg_match('/^www\./i',$key) ? "http://$key" : $key; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
+		$attrs["href"] = preg_match('/^[a-z]+:\/\//i',$key) ? $key : "http://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
 
-		return $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key)).$tail;
+		$replace_key = $this->_prepareNewReplaceKey();
+
+		$this->__replaces[$replace_key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
+
+		return $replace_key.$tail;
 	}
 
 	protected function _replaceEmail($matches){
@@ -223,11 +255,26 @@ class LinkFinder{
 		$address = trim($matches["address"]);
 		$ending_interrupter = ($matches["ending_interrupter"]);
 
+		$replace_key = $this->_prepareNewReplaceKey();
+
 		if(in_array($ending_interrupter,array(":"))){
-			return $matches[0];
+			$this->__replaces[$replace_key] = $matches[0];
+			return $replace_key;
 		}
 
 		$mailto_attrs["href"] = "mailto:$address";
-		return $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $address)).$ending_interrupter;
+
+		$this->__replaces[$replace_key] = $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $address));
+
+		return $replace_key.$ending_interrupter;
+	}
+
+	protected function _prepareNewReplaceKey(){
+		static $rnd, $counter = 0;
+
+		if(!$rnd){ $rnd = uniqid(); }
+
+		$counter++;
+		return " Xreplace.{$rnd}.{$counter}X ";
 	}
 }

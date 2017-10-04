@@ -179,6 +179,12 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 
 			"ftp://example.com/public/" => "ftp://example.com/public/",
 
+			"example.com" => "http://example.com",
+			"subdomain.example.com" => "http://subdomain.example.com",
+
+			"example.com/" => "http://example.com",
+			"example.com/page.html" => "http://example.com/page.html",
+
 			//"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898", // TODO:
 		);
 
