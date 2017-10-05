@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.2] 2017-10-05
+- Auto URLs detection even without "www." prefix
+
 ## [2.1] - 2017-04-01
 - Improvements and fixes in URL recognitions
 - Testing with PHPUnit 4.8
