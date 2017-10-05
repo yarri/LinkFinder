@@ -106,8 +106,11 @@ class LinkFinder{
 		$this->__options = $options;
 		$this->__replaces = array();
 
-		// urls
 		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]";
+		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot
+		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535"
+
+		// urls
 		$text = preg_replace_callback("/\b(((f|ht){1}tps?:\\/\\/|www\\.)$url_allowed_chars+)/i",array($this,"_replaceLink"),$text);
 
 		// emails
@@ -124,9 +127,11 @@ class LinkFinder{
 			"gov",
 			"mil",
 
-			"us",
+			// Country code top-level domains
+			// TODO: Add more
 			"cz",
 			"sk",
+			"us",
 			"uk",
 
 			// ICANN-era generic top-level domains
@@ -135,7 +140,7 @@ class LinkFinder{
 			"biz",
 		);
 		$url_allowed_suffixes = "(".join("|",$url_allowed_suffixes).")";
-		$text = preg_replace_callback("/\b(([a-z0-9-]+\\.)+($url_allowed_suffixes)(|\/$url_allowed_chars+))\b/i",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback($pattern = "/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 

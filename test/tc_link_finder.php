@@ -182,8 +182,14 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			"example.com" => "http://example.com",
 			"subdomain.example.com" => "http://subdomain.example.com",
 
-			"example.com/" => "http://example.com",
+			"example.com/" => "http://example.com/",
 			"example.com/page.html" => "http://example.com/page.html",
+
+			"example.com:81" => "http://example.com:81",
+			"example.com:81/" => "http://example.com:81/",
+			"example.com:81/page.html" => "http://example.com:81/page.html",
+
+			"subdomain.example.com" => "http://subdomain.example.com",
 
 			//"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898", // TODO:
 		);
@@ -204,6 +210,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 		);
 
 		$lf = new LinkFinder();
+
 		foreach($links as $src => $expected){
 			$expected = str_replace('&','&amp;',$expected); // "www.example.com/article.pl?id=123&format=raw" => "www.example.com/article.pl?id=123&amp;format=raw"
 			foreach($templates as $template){
@@ -211,6 +218,22 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 				$this->assertEquals(true,!!preg_match('/<a href="([^"]+)">/',$out,$matches),"$_src is containing a link");
 				$this->assertEquals($expected,$matches[1],"$_src is containing $expected");
 			}
+		}
+	}
+
+	function testNotLinks(){
+		$not_links = array(
+			"i like indian food.how about you.",
+			"tlds are .com, .net, .org, etc.",
+			"pattern is *.com",
+			"pattern is -.com",
+		);
+
+		$lf = new LinkFinder();
+
+		foreach($not_links as $str){
+			$out = $lf->process($str);
+			$this->assertEquals($str,$out,"\"$out\" should not contain a link");
 		}
 	}
 }
