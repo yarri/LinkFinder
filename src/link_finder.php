@@ -106,18 +106,13 @@ class LinkFinder{
 		$this->__options = $options;
 		$this->__replaces = array();
 
+		// Data for patterns
 		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]";
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535"
-
-		// urls
-		$text = preg_replace_callback("/\b(((f|ht){1}tps?:\\/\\/|www\\.)$url_allowed_chars+)/i",array($this,"_replaceLink"),$text);
-
-		// emails
-		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i",array($this,"_replaceEmail"),$text);
-
-		// urls without leading www., http://, ...
 		$url_allowed_suffixes = array(
+			// Taken from: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+
 			// Original top-level domains
 			"com",
 			"org",
@@ -128,19 +123,54 @@ class LinkFinder{
 			"mil",
 
 			// Country code top-level domains
-			// TODO: Add more
-			"cz",
-			"sk",
-			"us",
-			"uk",
+			"ac", "ad", "ae", "af", "ag", "ai", "al", "am", "an", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az",
+			"ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz",
+			"ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz",
+			"de", "dj", "dk", "dm", "do", "dz",
+			"ec", "ee", "eg", "eh", "er", "es", "et", "eu",
+			"fi", "fj", "fk", "fm", "fo", "fr",
+			"ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy",
+			"hk", "hm", "hn", "hr", "ht", "hu", "id",
+			"ie", "il", "im", "in", "io", "iq", "ir", "is", "it",
+			"je", "jm", "jo", "jp",
+			"ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz",
+			"la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly",
+			"ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz",
+			"na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz",
+			"om",
+			"pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py",
+			"qa",
+			"re", "ro", "rs", "ru", "rw",
+			"sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "su", "sv", "sx", "sy", "sz",
+			"tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tp", "tr", "tt", "tv", "tw", "tz",
+			"ua", "ug", "uk", "um", "us", "uy", "uz",
+			"va", "vc", "ve", "vg", "vi", "vn", "vu",
+			"wf", "ws",
+			"ye", "yt",
+			"za", "zm", "zw",
 
-			// ICANN-era generic top-level domains
+			// Popular ICANN-era generic top-level domains
+			// TODO: Add more
+			"aero",
+			"army",
+			"biz",
+			"blog",
+			"cloud",
+			"dev",
 			"info",
 			"name",
-			"biz",
+			"travel",
 		);
 		$url_allowed_suffixes = "(".join("|",$url_allowed_suffixes).")";
-		$text = preg_replace_callback($pattern = "/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
+
+		// urls
+		$text = preg_replace_callback("/\b(((f|ht){1}tps?:\\/\\/|www\\.)$url_allowed_chars+)/i",array($this,"_replaceLink"),$text);
+
+		// emails
+		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i",array($this,"_replaceEmail"),$text);
+
+		// urls without leading www., http://, ...
+		$text = preg_replace_callback($pattern = "/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port\b(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 
