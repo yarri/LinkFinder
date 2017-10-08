@@ -107,9 +107,9 @@ class LinkFinder{
 		$this->__replaces = array();
 
 		// Data for patterns
-		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/\\/=;]";
-		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot
-		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535"
+		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/=;\[\]]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: !$'()*`,
+		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]+"; // without dot
+		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
 		$url_allowed_suffixes = array(
 			// Taken from: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
 
@@ -163,14 +163,17 @@ class LinkFinder{
 		);
 		$url_allowed_suffixes = "(".join("|",$url_allowed_suffixes).")";
 
-		// urls
-		$text = preg_replace_callback("/\b(((f|ht){1}tps?:\\/\\/|www\\.)$url_allowed_chars+)/i",array($this,"_replaceLink"),$text);
+		// urls starting with http://, http://, ftp:/
+		$text = preg_replace_callback("/\b((ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
+
+		// urls starting with www.
+		$text = preg_replace_callback("/\b(www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
 
 		// emails
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i",array($this,"_replaceEmail"),$text);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback($pattern = "/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port\b(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port\b(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 

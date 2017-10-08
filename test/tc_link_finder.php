@@ -169,15 +169,22 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 
 	function testLinks(){
 		$links = array(
-			"www.ipsum.com" => "http://www.ipsum.com",
 			"http://www.ipsum.com/" => "http://www.ipsum.com/",
+			"http://www.ipsum.com:81/" => "http://www.ipsum.com:81/",
+			//
 			"https://www.example.com/article.pl?id=123" => "https://www.example.com/article.pl?id=123",
+			"https://www.example.com:81/article.pl?id=123" => "https://www.example.com:81/article.pl?id=123",
+			//
+			"www.ipsum.com" => "http://www.ipsum.com",
+			"www.ipsum.com:81" => "http://www.ipsum.com:81",
+			//
 			"www.example.com/article.pl?id=123" => "http://www.example.com/article.pl?id=123",
 			"www.example.com/article.pl?id=123&format=raw" => "http://www.example.com/article.pl?id=123&format=raw",
 			"www.example.com/article.pl?id=123;format=raw" => "http://www.example.com/article.pl?id=123;format=raw",
 			"www.www.example.intl" => "http://www.www.example.intl",
 
 			"ftp://example.com/public/" => "ftp://example.com/public/",
+			"ftp://example.com:1122/public/" => "ftp://example.com:1122/public/",
 
 			"example.com" => "http://example.com",
 			"subdomain.example.com" => "http://subdomain.example.com",
@@ -190,6 +197,8 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			"example.com:81/page.html" => "http://example.com:81/page.html",
 
 			"subdomain.example.com" => "http://subdomain.example.com",
+
+			"http://domain.com/var=[ID]" => "http://domain.com/var=[ID]",
 
 			//"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898", // TODO:
 		);
