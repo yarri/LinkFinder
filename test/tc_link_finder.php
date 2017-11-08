@@ -237,6 +237,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			"pattern is *.com",
 			"pattern is -.com",
 			"somehing like.xx",
+			"DůmLátek.cz"
 		);
 
 		$lf = new LinkFinder();

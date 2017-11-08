@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added option utf8 for texts in UTF-8 (default true)
+
 ## [2.2] 2017-10-05
 - Auto URLs detection even without "www." prefix
 

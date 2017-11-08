@@ -36,10 +36,13 @@ class LinkFinder{
 			"link_template" => '<a %attrs%>%url%</a>',
 			"mailto_template" => '<a %attrs%>%address%</a>',
 
+			"utf8" => true, // the parsed text is supposed to be treated as utf-8
+
 			// legacy options (try not to use them)
 			"open_links_in_new_windows" => null, // true, false
 			"link_class" => "",
 			"mailto_class" => "",
+
 		);
 
 		$this->_setOptions($options);
@@ -67,6 +70,7 @@ class LinkFinder{
 		$options = $this->_getOptions($options);
 		$attrs = $options["attrs"];
 		$mailto_attrs = $options["mailto_attrs"];
+		$u = $options["utf8"] ? "u" : "";
 
 		$rnd = uniqid();
 		$tr_table = $tr_table_rev = array();
@@ -164,16 +168,16 @@ class LinkFinder{
 		$url_allowed_suffixes = "(".join("|",$url_allowed_suffixes).")";
 
 		// urls starting with http://, http://, ftp:/
-		$text = preg_replace_callback("/\b((ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/\b((ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$u",array($this,"_replaceLink"),$text);
 
 		// urls starting with www.
-		$text = preg_replace_callback("/\b(www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/\b(www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$u",array($this,"_replaceLink"),$text);
 
 		// emails
-		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i",array($this,"_replaceEmail"),$text);
+		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$u",array($this,"_replaceEmail"),$text);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port\b(\/$url_allowed_chars*|))/i",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port\b(\/$url_allowed_chars*|))/i$u",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 
