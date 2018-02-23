@@ -21,30 +21,76 @@
  */
 class LinkFinder{
 
-	protected $_Options = null;
+	protected $default_options = array(
+		// attributes for <a> and <a href="mailto:..."> elements
+		"attrs" => array(),
+		"mailto_attrs" => array(),
+
+		"escape_html_entities" => true,
+		"link_template" => '<a %attrs%>%url%</a>',
+		"mailto_template" => '<a %attrs%>%address%</a>',
+
+		"utf8" => true, // the parsed text is supposed to be treated as utf-8
+
+		// legacy options (try not to use them)
+		"open_links_in_new_windows" => null, // true, false
+		"link_class" => "",
+		"mailto_class" => "",
+	);
+
+	protected $allowed_top_level_domains = array(
+		// Taken from: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+
+		// Original top-level domains
+		"com",
+		"org",
+		"net",
+		"int",
+		"edu",
+		"gov",
+		"mil",
+
+		// Country code top-level domains
+		"ac", "ad", "ae", "af", "ag", "ai", "al", "am", "an", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az",
+		"ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz",
+		"ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz",
+		"de", "dj", "dk", "dm", "do", "dz",
+		"ec", "ee", "eg", "eh", "er", "es", "et", "eu",
+		"fi", "fj", "fk", "fm", "fo", "fr",
+		"ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy",
+		"hk", "hm", "hn", "hr", "ht", "hu", "id",
+		"ie", "il", "im", "in", "io", "iq", "ir", "is", "it",
+		"je", "jm", "jo", "jp",
+		"ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz",
+		"la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly",
+		"ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz",
+		"na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz",
+		"om",
+		"pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py",
+		"qa",
+		"re", "ro", "rs", "ru", "rw",
+		"sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "su", "sv", "sx", "sy", "sz",
+		"tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tp", "tr", "tt", "tv", "tw", "tz",
+		"ua", "ug", "uk", "um", "us", "uy", "uz",
+		"va", "vc", "ve", "vg", "vi", "vn", "vu",
+		"wf", "ws",
+		"ye", "yt",
+		"za", "zm", "zw",
+
+		// Popular ICANN-era generic top-level domains
+		// TODO: Add more
+		"aero",
+		"army",
+		"biz",
+		"blog",
+		"cloud",
+		"dev",
+		"info",
+		"name",
+		"travel",
+	);
 
 	function __construct($options = array()){
-
-		// default options
-		$this->_Options = array(
-
-			// attributes for <a> and <a href="mailto:..."> elements
-			"attrs" => array(),
-			"mailto_attrs" => array(),
-
-			"escape_html_entities" => true,
-			"link_template" => '<a %attrs%>%url%</a>',
-			"mailto_template" => '<a %attrs%>%address%</a>',
-
-			"utf8" => true, // the parsed text is supposed to be treated as utf-8
-
-			// legacy options (try not to use them)
-			"open_links_in_new_windows" => null, // true, false
-			"link_class" => "",
-			"mailto_class" => "",
-
-		);
-
 		$this->_setOptions($options);
 	}
 
@@ -114,58 +160,7 @@ class LinkFinder{
 		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/=;\[\]]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: !$'()*`,
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]+"; // without dot
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
-		$url_allowed_suffixes = array(
-			// Taken from: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-
-			// Original top-level domains
-			"com",
-			"org",
-			"net",
-			"int",
-			"edu",
-			"gov",
-			"mil",
-
-			// Country code top-level domains
-			"ac", "ad", "ae", "af", "ag", "ai", "al", "am", "an", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az",
-			"ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz",
-			"ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz",
-			"de", "dj", "dk", "dm", "do", "dz",
-			"ec", "ee", "eg", "eh", "er", "es", "et", "eu",
-			"fi", "fj", "fk", "fm", "fo", "fr",
-			"ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy",
-			"hk", "hm", "hn", "hr", "ht", "hu", "id",
-			"ie", "il", "im", "in", "io", "iq", "ir", "is", "it",
-			"je", "jm", "jo", "jp",
-			"ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz",
-			"la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly",
-			"ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz",
-			"na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz",
-			"om",
-			"pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py",
-			"qa",
-			"re", "ro", "rs", "ru", "rw",
-			"sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "su", "sv", "sx", "sy", "sz",
-			"tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tp", "tr", "tt", "tv", "tw", "tz",
-			"ua", "ug", "uk", "um", "us", "uy", "uz",
-			"va", "vc", "ve", "vg", "vi", "vn", "vu",
-			"wf", "ws",
-			"ye", "yt",
-			"za", "zm", "zw",
-
-			// Popular ICANN-era generic top-level domains
-			// TODO: Add more
-			"aero",
-			"army",
-			"biz",
-			"blog",
-			"cloud",
-			"dev",
-			"info",
-			"name",
-			"travel",
-		);
-		$url_allowed_suffixes = "(".join("|",$url_allowed_suffixes).")";
+		$allowed_top_level_domains = "(".join("|",$this->allowed_top_level_domains).")";
 
 		// urls starting with http://, http://, ftp:/
 		$text = preg_replace_callback("/\b((ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
@@ -177,7 +172,7 @@ class LinkFinder{
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$utf8",array($this,"_replaceEmail"),$text);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$url_allowed_suffixes$optional_port\b(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$allowed_top_level_domains$optional_port\b(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 
@@ -239,8 +234,8 @@ class LinkFinder{
 	}
 
 	protected function _setOptions($options){
-		$options += $this->_Options;
-		$this->_Options = $options;
+		$options += $this->default_options;
+		$this->default_options = $options;
 	}
 
 	protected function _setOption($key,$value){
@@ -248,7 +243,7 @@ class LinkFinder{
 	}
 
 	protected function _getOptions($options = array()){
-		$options += $this->_Options;
+		$options += $this->default_options;
 
 		// Dealing with legacy options
 		//
