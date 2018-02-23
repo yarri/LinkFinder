@@ -53,7 +53,7 @@ Installation
 
 The best way how to install LinkFinder is to use a Composer:
 
-    composer require yarri/link-finder dev-master
+    composer require yarri/link-finder
 
 or just download the latest version from Github:
 
