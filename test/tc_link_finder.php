@@ -1,20 +1,20 @@
 <?php
 class TcLinkFinder extends TcBase{
 	function testBasicUsage(){
-		$lf = new LinkFinder();
+		$lfinder = new LinkFinder();
 
 		// a basic example
 		$src = 'Lorem www.ipsum.com. dolor@sit.net. Thank you';
 		$this->assertEquals(
 			'Lorem <a href="http://www.ipsum.com">www.ipsum.com</a>. <a href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
 		//
 		$src = 'Image: <img src="http://example.com/logo.gif" />, Url: www.ipsum.com';
 		$this->assertEquals(
 			'Image: <img src="http://example.com/logo.gif" />, Url: <a href="http://www.ipsum.com">www.ipsum.com</a>',
-			$lf->process($src,array("escape_html_entities" => false))
+			$lfinder->process($src,array("escape_html_entities" => false))
 		);
 
 		// auto escaping of HTML entities
@@ -23,7 +23,7 @@ class TcLinkFinder extends TcBase{
 		$this->assertEquals(
 			'Lorem <a href="http://www.ipsum.com">www.ipsum.com</a> &lt;<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>&gt;.
 			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> &lt;<a href="mailto:dolor@sit.net">dolor@sit.net</a>&gt;. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
 		// disabling auto escaping may produce invalid markup
@@ -32,36 +32,36 @@ class TcLinkFinder extends TcBase{
 		$this->assertEquals(
 			'Lorem <a href="http://www.ipsum.com">www.ipsum.com</a> <<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>>.
 			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> <<a href="mailto:dolor@sit.net">dolor@sit.net</a>>. Thank you',
-			$lf->process($src,array("escape_html_entities" => false))
+			$lfinder->process($src,array("escape_html_entities" => false))
 		);
 
 		// a git repository must not be interpreted as an email
 		$src = 'Source is located at git@github.com:yarri/LinkFinder.git';
-		$this->assertEquals('Source is located at git@github.com:yarri/LinkFinder.git',$lf->process($src));
+		$this->assertEquals('Source is located at git@github.com:yarri/LinkFinder.git',$lfinder->process($src));
 
 		// an example from the README.md
 		$src = 'Find more at www.ourstore.com <http://www.ourstore.com/>';
 		$this->assertEquals(
 			'Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
 		// source text contains a real link
 		$src = 'Find more at www.ourstore.com or click <a href="http://www.ourstore.com/contact">here</a> to contact us.';
 		$this->assertEquals(
 			'Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> or click <a href="http://www.ourstore.com/contact">here</a> to contact us.',
-			$lf->process($src,array("escape_html_entities" => false))
+			$lfinder->process($src,array("escape_html_entities" => false))
 		);
 
 		// in source there is already a correct HTML link
 		$src = '<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>';
-		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>',$lf->process($src,array("escape_html_entities" => false)));
+		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>',$lfinder->process($src,array("escape_html_entities" => false)));
 
 		// a tag immediately after an URL
 		$src = '<p>Contact as on www.earth.net<br />
 or we@earth.net</p>';
 		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net">www.earth.net</a><br />
-or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("escape_html_entities" => false)));
+or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,array("escape_html_entities" => false)));
 
 		$tr = array(
 			'url: www.domain.com, www.ourstore.com' => 'url: <a href="http://www.domain.com">www.domain.com</a>, <a href="http://www.ourstore.com">www.ourstore.com</a>',
@@ -69,24 +69,24 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			'just visit www.ourstore.com...' => 'just visit <a href="http://www.ourstore.com">www.ourstore.com</a>...',
 		);
 		foreach($tr as $src => $expected){
-			$this->assertEquals($expected,$lf->process($src),"source: $src");
+			$this->assertEquals($expected,$lfinder->process($src),"source: $src");
 		}
 
 		// URLs in quotes
 		// Steam sends strange formatted text in email address verification messages
 		$src = 'Sometimes in emails in text/plain parts not well formatted text occurs: <a href="http://www.click.me/now/">click here</a>';
-		$this->assertEquals('Sometimes in emails in text/plain parts not well formatted text occurs: &lt;a href=&quot;<a href="http://www.click.me/now/">http://www.click.me/now/</a>&quot;&gt;click here&lt;/a&gt;',$lf->process($src));
+		$this->assertEquals('Sometimes in emails in text/plain parts not well formatted text occurs: &lt;a href=&quot;<a href="http://www.click.me/now/">http://www.click.me/now/</a>&quot;&gt;click here&lt;/a&gt;',$lfinder->process($src));
 		//
 		$src = "Sometimes in emails in text/plain parts not well formatted text occurs: <a href='http://www.click.me/now/'>click here</a>";
-		$this->assertEquals('Sometimes in emails in text/plain parts not well formatted text occurs: &lt;a href=\'<a href="http://www.click.me/now/">http://www.click.me/now/</a>\'&gt;click here&lt;/a&gt;',$lf->process($src));
+		$this->assertEquals('Sometimes in emails in text/plain parts not well formatted text occurs: &lt;a href=\'<a href="http://www.click.me/now/">http://www.click.me/now/</a>\'&gt;click here&lt;/a&gt;',$lfinder->process($src));
 		//
 		$src = 'Link: "http://www.example.org/"';
-		$this->assertEquals('Link: "<a href="http://www.example.org/">http://www.example.org/</a>"',$lf->process($src,array("escape_html_entities" => false)));
+		$this->assertEquals('Link: "<a href="http://www.example.org/">http://www.example.org/</a>"',$lfinder->process($src,array("escape_html_entities" => false)));
 	}
 
 	function testOptions(){
 		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
-		$lf = new LinkFinder(array(
+		$lfinder = new LinkFinder(array(
 			"attrs" => array(
 				"class" => "link",
 				"target" => "_blank",
@@ -99,29 +99,29 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 
 		$this->assertEquals(
 			'<em>Lorem</em> <a class="link" href="http://www.ipsum.com" target="_blank">www.ipsum.com</a>. <a class="email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
 		$this->assertEquals(
 			'<em>Lorem</em> <a class="external-link" href="http://www.ipsum.com">www.ipsum.com</a>. <a class="email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
-			$lf->process($src,array("attrs" => array("class" => "external-link")))
+			$lfinder->process($src,array("attrs" => array("class" => "external-link")))
 		);
 
 		$this->assertEquals(
 			'&lt;em&gt;Lorem&lt;/em&gt; <a class="article-link" href="http://www.ipsum.com">www.ipsum.com</a>. <a class="article-email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
-			$lf->process($src,array("attrs" => array("class" => "article-link"), "mailto_attrs" => array("class" =>  "article-email"), "escape_html_entities" => true))
+			$lfinder->process($src,array("attrs" => array("class" => "article-link"), "mailto_attrs" => array("class" =>  "article-email"), "escape_html_entities" => true))
 		);
 
 		$this->assertEquals(
 			'<em>Lorem</em> <a class="link" href="http://www.ipsum.com" target="_blank">www.ipsum.com</a>. <a class="email" href="mailto:dolor@sit.net">dolor@sit.net</a>. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 	}
 
 	function testLegacyUsage(){
 		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
 
-		$lf = new LinkFinder(array(
+		$lfinder = new LinkFinder(array(
 			"open_links_in_new_windows" => true,
 			"escape_html_entities" => false,
 
@@ -133,28 +133,28 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 		));
 		$this->assertEquals(
 			'<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
-		$lf->setToOpenLinkInNewWindow(false);
-		$lf->setLinkClass("external-link");
+		$lfinder->setToOpenLinkInNewWindow(false);
+		$lfinder->setLinkClass("external-link");
 
 		$this->assertEquals(
 			'<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
 		$this->assertEquals(
 			'&lt;em&gt;Lorem&lt;/em&gt; <a href="http://www.ipsum.com" class="article-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="article-email">dolor@sit.net</a>. Thank you',
-			$lf->process($src,array("link_class" => "article-link", "mailto_class" => "article-email", "escape_html_entities" => true))
+			$lfinder->process($src,array("link_class" => "article-link", "mailto_class" => "article-email", "escape_html_entities" => true))
 		);
 
 		$this->assertEquals(
 			'<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
-			$lf->process($src)
+			$lfinder->process($src)
 		);
 
-		$lf = new LinkFinder(array(
+		$lfinder = new LinkFinder(array(
 			"open_links_in_new_windows" => true,
 			"escape_html_entities" => false,
 
@@ -164,7 +164,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			"link_template" => '<a href="%href%"%class%%target%>%url%</a>',
 			"mailto_template" => '<a href="mailto:%mailto%"%class%>%address%</a>',
 		));
-		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lf->process($src));
+		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lfinder->process($src));
 	}
 
 	function testLinks(){
@@ -218,12 +218,12 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			"Lorem <%s>",
 		);
 
-		$lf = new LinkFinder();
+		$lfinder = new LinkFinder();
 
 		foreach($links as $src => $expected){
 			$expected = str_replace('&','&amp;',$expected); // "www.example.com/article.pl?id=123&format=raw" => "www.example.com/article.pl?id=123&amp;format=raw"
 			foreach($templates as $template){
-				$out = $lf->process($_src = sprintf($template,$src));
+				$out = $lfinder->process($_src = sprintf($template,$src));
 				$this->assertEquals(true,!!preg_match('/<a href="([^"]+)">/',$out,$matches),"$_src is containing a link");
 				$this->assertEquals($expected,$matches[1],"$_src is containing $expected");
 			}
@@ -240,10 +240,10 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lf->process($src,array("
 			"DůmLátek.cz"
 		);
 
-		$lf = new LinkFinder();
+		$lfinder = new LinkFinder();
 
 		foreach($not_links as $str){
-			$out = $lf->process($str);
+			$out = $lfinder->process($str);
 			$this->assertEquals($str,$out,"\"$out\" should not contain a link");
 		}
 	}
