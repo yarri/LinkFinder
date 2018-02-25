@@ -118,11 +118,16 @@ class LinkFinder{
 		$mailto_attrs = $options["mailto_attrs"];
 		$utf8 = $options["utf8"] ? "u" : "";
 
-		$tr_table = $this->_getTextTrTable($text,$options);
+		$tr_table = $this->_prepareTextTrTable($text,$options);
 		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array(); // in PHP5.3 parameters of array_combine should have at least 1 element
 
 		if($options["escape_html_entities"]){
-			$text = $this->_escapeHtmlEntities($text);
+			$flags =  ENT_COMPAT;
+			if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
+
+			// As of PHP5.4 the default encoding is UTF-8, it causes troubles in non UTF-8 applications.
+			// It seems that the encoding ISO-8859-1 works well in UTF-8 applications.
+			$text = htmlspecialchars($text,$flags,"ISO-8859-1");
 		}
 		$text = strtr($text,$tr_table);
 
@@ -161,7 +166,7 @@ class LinkFinder{
 		return $text;
 	}
 
-	protected function _getTextTrTable($text,$options){
+	protected function _prepareTextTrTable($text,$options){
 		$rnd = uniqid();
 
 		if($options["escape_html_entities"]){
@@ -188,17 +193,6 @@ class LinkFinder{
 		}
 
 		return $tr_table;
-	}
-
-	protected function _escapeHtmlEntities($text){
-		$flags =  ENT_COMPAT;
-		if(defined("ENT_HTML401")){ $flags = $flags | ENT_HTML401; }
-
- 		// as of PHP5.4 the default encoding is UTF-8, it causes troubles in non UTF-8 applications,
-		// I think that the encoding ISO-8859-1 works well in UTF-8 applications
-		$encoding = "ISO-8859-1";
-
-		return htmlspecialchars($text,$flags,$encoding);
 	}
 
 	protected function _renderTemplate($template,$attrs,$replaces){
