@@ -64,7 +64,7 @@ Testing
 
 Install required dependencies for development:
 
-   composer update --dev
+    composer update --dev
 
 Run tests:
 
