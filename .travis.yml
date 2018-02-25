@@ -18,5 +18,4 @@ before_install:
   - mkdir -p test/build/coverage-xml
 
 script:
-  - ./vendor/bin/phpunit test/link_finder_test.php --coverage-clover test/build/coverage-xml/clover.xml
-  - CODACY_PROJECT_TOKEN=97a4a7affeca4ca1ae10b890899e2835 ./vendor/bin/codacycoverage clover test/build/coverage-xml/clover.xml
+  - ./vendor/bin/phpunit test/link_finder_test.php --coverage-clover test/build/coverage-xml/clover.xml && CODACY_PROJECT_TOKEN=97a4a7affeca4ca1ae10b890899e2835 ./vendor/bin/codacycoverage clover test/build/coverage-xml/clover.xml
