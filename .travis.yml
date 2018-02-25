@@ -1,4 +1,5 @@
 # vim:ts=2:sw=2:et
+
 dist: precise
 
 language: php
@@ -13,7 +14,7 @@ php:
   - 7.2
 
 before_install:
-  - composer global require "phpunit/phpunit=4.8.*"
+  - composer update --dev
 
 script:
-  - cd test && wget -q -O - https://raw.github.com/atk14/Atk14/master/src/scripts/run_unit_tests | php
+  - ./vendor/bin/phpunit test/link_finder_test.php

@@ -59,6 +59,17 @@ or just download the latest version from Github:
 
     wget https://raw.github.com/yarri/LinkFinder/master/src/link_finder.php
 
+Testing
+-------
+
+Install required dependencies for development:
+
+   composer update --dev
+
+Run tests:
+
+    ./vendor/bin/phpunit test/link_finder_test.php
+
 License
 -------
 
