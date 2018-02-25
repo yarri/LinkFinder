@@ -118,7 +118,7 @@ class LinkFinder{
 		$mailto_attrs = $options["mailto_attrs"];
 		$utf8 = $options["utf8"] ? "u" : "";
 
-		$tr_table = $this->_prepareTrTable($text,$options);
+		$tr_table = $this->_getTextTrTable($text,$options);
 		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array(); // in PHP5.3 parameters of array_combine should have at least 1 element
 
 		if($options["escape_html_entities"]){
@@ -161,7 +161,7 @@ class LinkFinder{
 		return $text;
 	}
 
-	protected function _prepareTrTable($text,$options){
+	protected function _getTextTrTable($text,$options){
 		$rnd = uniqid();
 
 		if($options["escape_html_entities"]){
@@ -255,12 +255,8 @@ class LinkFinder{
 		if(strlen($options["link_class"])){
 			$options["attrs"]["class"] = $options["link_class"];
 		}
-		if(isset($options["open_links_in_new_windows"])){
-			if($options["open_links_in_new_windows"]){
-				$options["attrs"]["target"] = "_blank";
-			}else{
-				unset($options["attrs"]["target"]);
-			}
+		if($options["open_links_in_new_windows"]){
+			$options["attrs"]["target"] = "_blank";
 		}
 		if(strlen($options["mailto_class"])){
 			$options["mailto_attrs"]["class"] = $options["mailto_class"];
