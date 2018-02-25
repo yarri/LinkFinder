@@ -38,7 +38,7 @@ class LinkFinder{
 		"mailto_class" => "",
 	);
 
-	protected $allowed_top_level_domains = array(
+	protected $top_level_domains = array(
 		// Taken from: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
 
 		// Original top-level domains
@@ -160,7 +160,7 @@ class LinkFinder{
 		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/=;\[\]]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: !$'()*`,
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]+"; // without dot
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
-		$allowed_top_level_domains = "(".join("|",$this->allowed_top_level_domains).")";
+		$top_level_domains = "(".join("|",$this->top_level_domains).")";
 
 		// urls starting with http://, http://, ftp:/
 		$text = preg_replace_callback("/\b((ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
@@ -172,7 +172,7 @@ class LinkFinder{
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$utf8",array($this,"_replaceEmail"),$text);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$allowed_top_level_domains$optional_port\b(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$top_level_domains$optional_port\b(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 

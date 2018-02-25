@@ -63,12 +63,12 @@ or we@earth.net</p>';
 		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net">www.earth.net</a><br />
 or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,array("escape_html_entities" => false)));
 
-		$tr = array(
+		$tr_table = array(
 			'url: www.domain.com, www.ourstore.com' => 'url: <a href="http://www.domain.com">www.domain.com</a>, <a href="http://www.ourstore.com">www.ourstore.com</a>',
 			'url: www.domain.com; www.ourstore.com' => 'url: <a href="http://www.domain.com">www.domain.com</a>; <a href="http://www.ourstore.com">www.ourstore.com</a>',
 			'just visit www.ourstore.com...' => 'just visit <a href="http://www.ourstore.com">www.ourstore.com</a>...',
 		);
-		foreach($tr as $src => $expected){
+		foreach($tr_table as $src => $expected){
 			$this->assertEquals($expected,$lfinder->process($src),"source: $src");
 		}
 
