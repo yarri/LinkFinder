@@ -278,7 +278,7 @@ class LinkFinder{
 
 		$attrs["href"] = preg_match('/^[a-z]+:\/\//i',$key) ? $key : "http://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
 
-		$replace_key = $this->_prepareNewReplaceKey();
+		$replace_key = $this->_getNewReplaceKey();
 
 		$this->__replaces[$replace_key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
 
@@ -292,7 +292,7 @@ class LinkFinder{
 		$address = trim($matches["address"]);
 		$ending_interrupter = ($matches["ending_interrupter"]);
 
-		$replace_key = $this->_prepareNewReplaceKey();
+		$replace_key = $this->_getNewReplaceKey();
 
 		if(in_array($ending_interrupter,array(":"))){
 			$this->__replaces[$replace_key] = $matches[0];
@@ -306,7 +306,7 @@ class LinkFinder{
 		return $replace_key.$ending_interrupter;
 	}
 
-	protected function _prepareNewReplaceKey(){
+	protected function _getNewReplaceKey(){
 		static $rnd, $counter = 0;
 
 		if(!$rnd){ $rnd = uniqid(); }
