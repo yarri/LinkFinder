@@ -111,45 +111,20 @@ class LinkFinder{
 	 * @return string
 	 */
 	function process($text,$options = array()){
-		settype($text,"string");
-
+		$text = (string)$text;
 		$options = $this->_getOptions($options);
+
 		$attrs = $options["attrs"];
 		$mailto_attrs = $options["mailto_attrs"];
 		$utf8 = $options["utf8"] ? "u" : "";
 
-		$rnd = uniqid();
-		$tr_table = $tr_table_rev = array();
+		$tr_table = $this->_prepareTrTable($text,$options);
+		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array(); // in PHP5.3 parameters of array_combine should have at least 1 element
 
 		if($options["escape_html_entities"]){
-
 			$text = $this->_escapeHtmlEntities($text);
-			$tr_table = array(
-				"&amp;" => "Xampicek{$rnd}X",
-				"&lt;" => " .._XltX{$rnd}_.. ",
-				"&gt;" => " .._XgtX{$rnd}_.. ",
-				"&quot;" => " .._XquotX{$rnd}_.. ",
-			);
-
-		}else{
-
-			// building replacements for existing links (<a>...</a>)
-			preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
-			foreach($matches[1] as $i => $match){
-				$tr_table[$match] = " _XatagX{$rnd}.{$i}_ "; // 'Click <a>here</a>' -> 'Click  _XatagX1234_ '
-			}
-
-			// building replacements for existing tags
-			preg_match_all('/(<[a-z0-9]+(|\s[^<>]*)\/?>)/si',$text,$matches);
-			foreach($matches[1] as $i => $match){
-				$tr_table[$match] = " _XtagX{$rnd}.{$i}_ "; // 'My photo is here: <img src="http://example.com/image.jpg" />' -> 'My photo is here:  _XtagX1234_ '
-			}
-
 		}
 		$text = strtr($text,$tr_table);
-
-		// in PHP5.3 parameters of array_combine should have at least 1 element
-		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array();
 
 		$this->__attrs = $attrs;
 		$this->__mailto_attrs = $mailto_attrs;
@@ -184,6 +159,35 @@ class LinkFinder{
 		$text = strtr($text,$tr_table_rev);
 
 		return $text;
+	}
+
+	protected function _prepareTrTable($text,$options){
+		$rnd = uniqid();
+
+		if($options["escape_html_entities"]){
+			return array(
+				"&amp;" => "Xampicek{$rnd}X",
+				"&lt;" => " .._XltX{$rnd}_.. ",
+				"&gt;" => " .._XgtX{$rnd}_.. ",
+				"&quot;" => " .._XquotX{$rnd}_.. ",
+			);
+		}
+
+		$tr_table = array();
+
+		// building replacements for existing links (<a>...</a>)
+		preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
+		foreach($matches[1] as $i => $match){
+			$tr_table[$match] = " _XatagX{$rnd}.{$i}_ "; // 'Click <a>here</a>' -> 'Click  _XatagX1234_ '
+		}
+
+		// building replacements for existing tags
+		preg_match_all('/(<[a-z0-9]+(|\s[^<>]*)\/?>)/si',$text,$matches);
+		foreach($matches[1] as $i => $match){
+			$tr_table[$match] = " _XtagX{$rnd}.{$i}_ "; // 'My photo is here: <img src="http://example.com/image.jpg" />' -> 'My photo is here:  _XtagX1234_ '
+		}
+
+		return $tr_table;
 	}
 
 	protected function _escapeHtmlEntities($text){
