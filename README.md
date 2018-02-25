@@ -6,7 +6,7 @@ LinkFinder
 [![Codacy Project Certification](https://api.codacy.com/project/badge/Grade/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yarri/LinkFinder&amp;utm_campaign=Badge_Grade)
 [![Coverage](https://api.codacy.com/project/badge/Coverage/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&utm_medium=referral&utm_content=yarri/LinkFinder&utm_campaign=Badge_Coverage)
 
-LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable.
+LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable. In a HTML document the LinkFinder searches for missing links and makes them clickable too.
 
     $text = '
      Welcome at www.example.com!
