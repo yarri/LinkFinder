@@ -6,7 +6,10 @@ LinkFinder
 [![Codacy Project Certification](https://api.codacy.com/project/badge/Grade/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yarri/LinkFinder&amp;utm_campaign=Badge_Grade)
 [![Coverage](https://api.codacy.com/project/badge/Coverage/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&utm_medium=referral&utm_content=yarri/LinkFinder&utm_campaign=Badge_Coverage)
 
-LinkFinder is a PHP class. In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable. In a HTML document the LinkFinder searches for missing links and makes them clickable too.
+In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable, in a HTML document searches for missing links and makes them clickable too.
+
+Usage
+-----
 
     $text = '
      Welcome at www.example.com!
@@ -43,12 +46,12 @@ Escaping of HTML entities is enabled by default:
     // Find more at
     // &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;
 
-The LinkFinder can be used for auto-creating links in a Markdown document:
+Creating missing links on URLs or emails in a HTML document:
 
-    $markdown = file_get_contents("/path/to/markdown/document");
-    $html = Michelf\Markdown::defaultTransform($markdown);
-    $lf = new LinkFinder(array("escape_html_entities" => false));
-    echo $lf->process($html);
+    $html_document = '<p>Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.</p>';
+    $lf = new LinkFinder(["escape_html_entities" => false]);
+    echo $lf->process($html_document);
+    // <p>Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.</p>
 
 Installation
 ------------
