@@ -240,7 +240,11 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"pattern is *.com",
 			"pattern is -.com",
 			"somehing like.xx",
-			"DůmLátek.cz"
+			"DůmLátek.cz",
+			"/var/www/app.com/index.html",
+			"/var/www/www.app.com/index.html",
+			'.example.com',
+			'.www.example.com'
 		);
 
 		$lfinder = new LinkFinder();

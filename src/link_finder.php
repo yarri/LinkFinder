@@ -143,16 +143,16 @@ class LinkFinder{
 		$top_level_domains = "(".join("|",$this->top_level_domains).")";
 
 		// urls starting with http://, http://, ftp:/
-		$text = preg_replace_callback("/\b((ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
 		// urls starting with www.
-		$text = preg_replace_callback("/\b(www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
 		// emails
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$utf8",array($this,"_replaceEmail"),$text);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback("/\b(($domain_name_part\\.)+$top_level_domains$optional_port\b(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port\b(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 
@@ -263,7 +263,13 @@ class LinkFinder{
 		$attrs = $this->__attrs;
 		$options = $this->__options;
 
-		$key = trim($matches[1]);
+		$first_char = $matches["first_char"];
+		$key = trim($matches["link"]);
+
+		if(in_array($first_char,['/','.'])){
+			return $matches[0];
+		}
+
 		$tail = "";
 		if(preg_match("/^(.+?)([.,;]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
 			$key = $_matches[1];
@@ -276,7 +282,7 @@ class LinkFinder{
 
 		$this->__replaces[$replace_key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
 
-		return $replace_key.$tail;
+		return $first_char.$replace_key.$tail;
 	}
 
 	protected function _replaceEmail($matches){
