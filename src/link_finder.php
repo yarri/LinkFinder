@@ -266,7 +266,7 @@ class LinkFinder{
 		$first_char = $matches["first_char"];
 		$key = trim($matches["link"]);
 
-		if(in_array($first_char,['/','.'])){
+		if(in_array($first_char,array('/','.'))){
 			return $matches[0];
 		}
 
