@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.3] 2018-06-04
+- Links detection tuned
+
+### Added
 - Added option utf8 for texts in UTF-8 (default true)
 
 ## [2.2] 2017-10-05
