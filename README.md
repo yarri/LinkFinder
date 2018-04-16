@@ -73,7 +73,7 @@ Install required dependencies for development:
 
 Run tests:
 
-    ./vendor/bin/phpunit test/link_finder_test.php
+    ./test/run_tests.sh
 
 License
 -------
