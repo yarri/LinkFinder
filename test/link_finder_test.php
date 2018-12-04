@@ -85,6 +85,10 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		//
 		$src = 'Link: "http://www.example.org/"';
 		$this->assertEquals('Link: "<a href="http://www.example.org/">http://www.example.org/</a>"',$lfinder->process($src,array("escape_html_entities" => false)));
+
+		// URL with username and password
+		$src = 'Development preview is at http://preview:project123@project.preview.example.org/';
+		$this->assertEquals('Development preview is at <a href="http://preview:project123@project.preview.example.org/">http://preview:project123@project.preview.example.org/</a>',$lfinder->process($src));
 	}
 
 	function testOptions(){

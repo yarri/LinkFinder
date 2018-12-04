@@ -141,6 +141,11 @@ class LinkFinder{
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]+"; // without dot
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
 		$top_level_domains = "(".join("|",$this->top_level_domains).")";
+		$username_chars = "[-a-zA-Z0-9%]+";
+		$password_chars = $username_chars;
+
+		// urls starting with http://, http://, ftp:/ and containing username and password
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
 		// urls starting with http://, http://, ftp:/
 		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
