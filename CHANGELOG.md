@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.3.1] 2018-12-04
+- Added support for urls with username and password
+
 ## [2.3] 2018-04-06
 - Links detection tuned
 
