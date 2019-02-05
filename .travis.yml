@@ -1,6 +1,6 @@
 # vim:ts=2:sw=2:et
 
-dist: precise
+dist: trusty
 
 language: php
 
@@ -12,6 +12,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 before_install:
   - composer update --dev
