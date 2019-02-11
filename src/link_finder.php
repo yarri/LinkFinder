@@ -106,7 +106,7 @@ class LinkFinder{
 	 * In the given text it searches for URLs and emails and adds <a> tags around them.
 	 *
 	 * @access public
-	 * @param string $text					vstupni text
+	 * @param string $text
 	 * @param array $options
 	 * @return string
 	 */
@@ -169,6 +169,21 @@ class LinkFinder{
 		$text = strtr($text,$tr_table_rev);
 
 		return $text;
+	}
+
+	/**
+	 * In a HTML text it searches for URLs and emails that are not marked as links
+	 *
+	 * @access public
+	 * @param string $text 									HTML text
+	 * @param array $options
+	 * @return string												HTML text
+	 */
+	function processHtml($html,$options = array()){
+		$options += array(
+			"escape_html_entities" => false,
+		);
+		return $this->process($html,$options);
 	}
 
 	protected function _prepareTextTrTable($text,$options){

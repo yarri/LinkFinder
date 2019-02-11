@@ -51,14 +51,15 @@ class LinkFinderTest extends TestCase{
 
 		// source text contains a real link
 		$src = 'Find more at www.ourstore.com or click <a href="http://www.ourstore.com/contact">here</a> to contact us.';
-		$this->assertEquals(
-			'Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> or click <a href="http://www.ourstore.com/contact">here</a> to contact us.',
-			$lfinder->process($src,array("escape_html_entities" => false))
-		);
+		$result = 'Find more at <a href="http://www.ourstore.com">www.ourstore.com</a> or click <a href="http://www.ourstore.com/contact">here</a> to contact us.';
+		$this->assertEquals($result,$lfinder->process($src,array("escape_html_entities" => false)));
+		$this->assertEquals($result,$lfinder->processHtml($src));
 
 		// in source there is already a correct HTML link
 		$src = '<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>';
-		$this->assertEquals('<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>',$lfinder->process($src,array("escape_html_entities" => false)));
+		$result = '<p>Contact as on <a href="http://www.earth.net/">www.earth.net</a></p>';
+		$this->assertEquals($result,$lfinder->process($src,array("escape_html_entities" => false)));
+		$this->assertEquals($result,$lfinder->processHtml($src));
 
 		// a tag immediately after an URL
 		$src = '<p>Contact as on www.earth.net<br />
