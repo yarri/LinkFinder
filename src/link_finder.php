@@ -81,13 +81,25 @@ class LinkFinder{
 		// TODO: Add more
 		"aero",
 		"army",
+		"bargains",
+		"bid",
 		"biz",
 		"blog",
+		"codes",
 		"cloud",
 		"dev",
+		"email",
+		"estate",
+		"expert",
 		"info",
+		"jobs",
+		"kitchen",
+		"mobi",
 		"name",
+		"tech",
+		"tel",
 		"travel",
+		"xyz",
 	);
 
 	function __construct($options = array()){
