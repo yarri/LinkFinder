@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.4] 2019-02-11
+- Added method LinkFinder::processHtml()
+- Added some more popular top level domains
+- Project is being tested in PHP7.3
+
 ## [2.3.1] 2018-12-04
 - Added support for urls with username and password
 
