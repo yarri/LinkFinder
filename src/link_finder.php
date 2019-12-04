@@ -303,9 +303,15 @@ class LinkFinder{
 		}
 
 		$tail = "";
+
 		if(preg_match("/^(.+?)([.,;]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
 			$key = $_matches[1];
 			$tail = $_matches[2];
+		}
+
+		if($first_char=="[" && preg_match('/\]$/',$key)){ // [http://www.example.com/]  -> [<a href="http://www.example.com/">http://www.example.com/</a>]
+			$tail = "]".$tail;
+			$key = substr($key,0,-1);
 		}
 
 		$attrs["href"] = preg_match('/^[a-z]+:\/\//i',$key) ? $key : "http://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"

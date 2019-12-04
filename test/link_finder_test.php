@@ -175,6 +175,14 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lfinder->process($src));
 	}
 
+	function testLinksInBrackets(){
+		$lfinder = new LinkFinder();
+		$this->assertEquals('Example (<a href="http://example.com/">http://example.com/</a>)',$lfinder->process('Example (http://example.com/)'));
+		$this->assertEquals('Square Brackets [<a href="http://example.com/">http://example.com/</a>]',$lfinder->process('Square Brackets [http://example.com/]'));
+		$this->assertEquals('Square Brackets [<a href="http://example.com/">http://example.com/</a>]. Nice!',$lfinder->process('Square Brackets [http://example.com/]. Nice!'));
+		$this->assertEquals('Braces {<a href="http://example.com/">http://example.com/</a>}',$lfinder->process('Braces {http://example.com/}'));
+	}
+
 	function testLinks(){
 		$links = array(
 			"http://www.ipsum.com/" => "http://www.ipsum.com/",
