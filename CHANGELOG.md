@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.4.1] 2019-12-05
+- Added detection of links in square brackets
+
 ## [2.4] 2019-02-11
 - Added method LinkFinder::processHtml()
 - Added some more popular top level domains
