@@ -1,15 +1,16 @@
 # Change Log
-All notable changes to this project will be documented in this file.
+All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
 ## [2.4.1] 2019-12-05
 - Added detection of links in square brackets
+- Project is being tested in PHP 7.4
 
 ## [2.4] 2019-02-11
 - Added method LinkFinder::processHtml()
 - Added some more popular top level domains
-- Project is being tested in PHP7.3
+- Project is being tested in PHP 7.3
 
 ## [2.3.1] 2018-12-04
 - Added support for urls with username and password
