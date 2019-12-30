@@ -1,7 +1,7 @@
 {
         "name": "yarri/link-finder",
         "type": "library",
-        "description": "In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable, in a HTML document searches for missing links and makes them clickable too.",
+        "description": "Converts non-clickable URLs and email addresses in text (plain or HTML) into clickable HTML links",
         "keywords": ["url", "link", "linkify",  "urlize", "urlizer", "email", "e-mail"],
         "homepage": "https://github.com/yarri/LinkFinder",
         "license": ["MIT"],
