@@ -141,6 +141,9 @@ class LinkFinder{
 			// It seems that the encoding ISO-8859-1 works well in UTF-8 applications.
 			$text = htmlspecialchars($text,$flags,"ISO-8859-1");
 		}
+
+		$text_orig = $text;
+
 		$text = strtr($text,$tr_table);
 
 		$this->__attrs = $attrs;
@@ -158,6 +161,10 @@ class LinkFinder{
 
 		// urls starting with http://, http://, ftp:/ and containing username and password
 		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		if(strlen($text)==0){
+			// perhaps there is an invalid UTF-8 char in $text
+			return $text_orig;
+		}
 
 		// urls starting with http://, http://, ftp:/
 		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);

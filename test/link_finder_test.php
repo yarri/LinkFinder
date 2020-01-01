@@ -90,6 +90,22 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		// URL with username and password
 		$src = 'Development preview is at http://preview:project123@project.preview.example.org/';
 		$this->assertEquals('Development preview is at <a href="http://preview:project123@project.preview.example.org/">http://preview:project123@project.preview.example.org/</a>',$lfinder->process($src));
+
+ 		// invalid utf-8 char
+		$invalid_char = chr(200);
+		$src = "Lorem$invalid_char www.ipsum.com. dolor@sit.net. Thank you";
+		$this->assertEquals(
+			"Lorem$invalid_char www.ipsum.com. dolor@sit.net. Thank you",
+			$lfinder->process($src)
+		);
+		//
+		$invalid_char = chr(200);
+		$src = "Lorem$invalid_char <www.ipsum.com>. dolor@sit.net. Thank you";
+		$this->assertEquals(
+			"Lorem$invalid_char &lt;www.ipsum.com&gt;. dolor@sit.net. Thank you",
+			$lfinder->process($src)
+		);
+
 	}
 
 	function testOptions(){
