@@ -90,6 +90,22 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		// URL with username and password
 		$src = 'Development preview is at http://preview:project123@project.preview.example.org/';
 		$this->assertEquals('Development preview is at <a href="http://preview:project123@project.preview.example.org/">http://preview:project123@project.preview.example.org/</a>',$lfinder->process($src));
+
+ 		// invalid utf-8 char
+		$invalid_char = chr(200);
+		$src = "Lorem$invalid_char www.ipsum.com. dolor@sit.net. Thank you";
+		$this->assertEquals(
+			"Lorem$invalid_char www.ipsum.com. dolor@sit.net. Thank you",
+			$lfinder->process($src)
+		);
+		//
+		$invalid_char = chr(200);
+		$src = "Lorem$invalid_char <www.ipsum.com>. dolor@sit.net. Thank you";
+		$this->assertEquals(
+			"Lorem$invalid_char &lt;www.ipsum.com&gt;. dolor@sit.net. Thank you",
+			$lfinder->process($src)
+		);
+
 	}
 
 	function testOptions(){
@@ -175,6 +191,14 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lfinder->process($src));
 	}
 
+	function testLinksInBrackets(){
+		$lfinder = new LinkFinder();
+		$this->assertEquals('Example (<a href="http://example.com/">http://example.com/</a>)',$lfinder->process('Example (http://example.com/)'));
+		$this->assertEquals('Square Brackets [<a href="http://example.com/">http://example.com/</a>]',$lfinder->process('Square Brackets [http://example.com/]'));
+		$this->assertEquals('Square Brackets [<a href="http://example.com/">http://example.com/</a>]. Nice!',$lfinder->process('Square Brackets [http://example.com/]. Nice!'));
+		$this->assertEquals('Braces {<a href="http://example.com/">http://example.com/</a>}',$lfinder->process('Braces {http://example.com/}'));
+	}
+
 	function testLinks(){
 		$links = array(
 			"http://www.ipsum.com/" => "http://www.ipsum.com/",
@@ -223,7 +247,14 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"Lorem: %s",
 			"Lorem:%s",
 			"Lorem %s!",
-			"Lorem <%s>",
+			"Brackets (%s)",
+			"Brackets (%s), Nice!",
+			"Angled Bbrackets <%s>",
+			"Angled Brackets <%s>, Nice!",
+			"Square Brackets [%s]",
+			"Square Brackets [%s], Nice!",
+			"Braces {%s}",
+			"Braces {%s}, Nice!",
 		);
 
 		$lfinder = new LinkFinder();

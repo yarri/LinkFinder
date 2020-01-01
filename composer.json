@@ -1,8 +1,8 @@
 {
         "name": "yarri/link-finder",
         "type": "library",
-        "description": "In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable, in a HTML document searches for missing links and makes them clickable too.",
-        "keywords": ["url", "link", "urlize", "urlizer", "email", "e-mail"],
+        "description": "Converts non-clickable URLs and email addresses in text (plain or HTML) into clickable HTML links",
+        "keywords": ["url", "link", "linkify",  "urlize", "urlizer", "email", "e-mail"],
         "homepage": "https://github.com/yarri/LinkFinder",
         "license": ["MIT"],
         "authors": [
@@ -12,11 +12,10 @@
                 }
         ],
         "require": {
-                "php": ">=5.0.0"
+                "php": ">=5.3.0"
         },
         "require-dev": {
-                "phpunit/phpunit": "4.8.*",
-                "codacy/coverage": "dev-master"
+                "phpunit/phpunit": "4.8.*"
         },
         "autoload": {
                 "classmap": ["src"]

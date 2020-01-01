@@ -81,13 +81,25 @@ class LinkFinder{
 		// TODO: Add more
 		"aero",
 		"army",
+		"bargains",
+		"bid",
 		"biz",
 		"blog",
+		"codes",
 		"cloud",
 		"dev",
+		"email",
+		"estate",
+		"expert",
 		"info",
+		"jobs",
+		"kitchen",
+		"mobi",
 		"name",
+		"tech",
+		"tel",
 		"travel",
+		"xyz",
 	);
 
 	function __construct($options = array()){
@@ -129,6 +141,9 @@ class LinkFinder{
 			// It seems that the encoding ISO-8859-1 works well in UTF-8 applications.
 			$text = htmlspecialchars($text,$flags,"ISO-8859-1");
 		}
+
+		$text_orig = $text;
+
 		$text = strtr($text,$tr_table);
 
 		$this->__attrs = $attrs;
@@ -146,6 +161,10 @@ class LinkFinder{
 
 		// urls starting with http://, http://, ftp:/ and containing username and password
 		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		if(strlen($text)==0){
+			// perhaps there is an invalid UTF-8 char in $text
+			return $text_orig;
+		}
 
 		// urls starting with http://, http://, ftp:/
 		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
@@ -291,9 +310,15 @@ class LinkFinder{
 		}
 
 		$tail = "";
+
 		if(preg_match("/^(.+?)([.,;]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
 			$key = $_matches[1];
 			$tail = $_matches[2];
+		}
+
+		if($first_char=="[" && preg_match('/\]$/',$key)){ // [http://www.example.com/]  -> [<a href="http://www.example.com/">http://www.example.com/</a>]
+			$tail = "]".$tail;
+			$key = substr($key,0,-1);
 		}
 
 		$attrs["href"] = preg_match('/^[a-z]+:\/\//i',$key) ? $key : "http://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
