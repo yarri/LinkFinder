@@ -3,6 +3,9 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.4.2] 2020-01-01
+- Preventing of deletion of text containing an invalid UTF-8 character
+
 ## [2.4.1] 2019-12-05
 - Added detection of links in square brackets
 - Project is being tested in PHP 7.4
