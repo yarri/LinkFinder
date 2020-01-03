@@ -249,20 +249,35 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"Lorem %s!",
 			"Brackets (%s)",
 			"Brackets (%s), Nice!",
-			"Angled Bbrackets <%s>",
+			"Brackets (%s); Nice!",
+			"Brackets (%s). Nice!",
+			"Angled Brackets <%s>",
 			"Angled Brackets <%s>, Nice!",
+			"Angled Brackets <%s>; Nice!",
+			"Angled Brackets <%s>. Nice!",
 			"Square Brackets [%s]",
 			"Square Brackets [%s], Nice!",
 			"Braces {%s}",
 			"Braces {%s}, Nice!",
+			"Braces {%s}; Nice!",
+			"Braces {%s}. Nice!",
 		);
 
 		$lfinder = new LinkFinder();
 
-		foreach($links as $src => $expected){
+		foreach($links as $link_src => $expected){
 			$expected = str_replace('&','&amp;',$expected); // "www.example.com/article.pl?id=123&format=raw" => "www.example.com/article.pl?id=123&amp;format=raw"
 			foreach($templates as $template){
-				$out = $lfinder->process($_src = sprintf($template,$src));
+				// LinkFinder::process()
+				$_src = sprintf($template,$link_src);
+				$out = $lfinder->process($_src);
+				$this->assertEquals(true,!!preg_match('/<a href="([^"]+)">/',$out,$matches),"$_src is containing a link");
+				$this->assertEquals($expected,$matches[1],"$_src is containing $expected");
+
+				// LinkFinder::processHtml()
+				$template = htmlspecialchars($template); // $template must be a valid HTML snippet
+				$_src = sprintf($template,htmlspecialchars($link_src));
+				$out = $lfinder->processHtml($_src);
 				$this->assertEquals(true,!!preg_match('/<a href="([^"]+)">/',$out,$matches),"$_src is containing a link");
 				$this->assertEquals($expected,$matches[1],"$_src is containing $expected");
 			}

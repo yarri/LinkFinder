@@ -217,7 +217,10 @@ class LinkFinder{
 			);
 		}
 
-		$tr_table = array();
+		$tr_table = array(
+			"&lt;" => " .._XltX{$rnd}_.. ",
+			"&gt;" => " .._XgtX{$rnd}_.. ",
+		);
 
 		// building replacements for existing links (<a>...</a>)
 		preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
