@@ -3,6 +3,9 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.4.3] 2020-01-03
+- Fixes link recognition in angled braces (in a HTML snippet)
+
 ## [2.4.2] 2020-01-01
 - Preventing of deletion of text containing an invalid UTF-8 character
 
