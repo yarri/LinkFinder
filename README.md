@@ -48,23 +48,25 @@ Escaping of HTML entities is enabled by default:
 
 Creating missing links on URLs or emails in a HTML document:
 
-    $html_document = '<p>Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.</p>';
+    $html_document = '
+      <p>
+        Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.
+      </p>
+    ';
     $lf = new LinkFinder();
     echo $lf->processHtml($html_document);
-    // <p>Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.</p>
+    // <p>
+    //   Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.
+    // </p>
 
 Method $lf->processHtml() is actually an alias for $lf->process($html_document,["escape_html_entities" => false]).
 
 Installation
 ------------
 
-The best way how to install LinkFinder is to use a Composer:
+Just use the Composer:
 
     composer require yarri/link-finder
-
-or just download the latest version from Github:
-
-    wget https://raw.github.com/yarri/LinkFinder/master/src/link_finder.php
 
 Testing
 -------
