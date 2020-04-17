@@ -61,7 +61,7 @@ Creating missing links on URLs or emails in a HTML document:
 
 Method $lf->processHtml() is actually an alias for $lf->process($html_document,["escape_html_entities" => false]).
 
-In case of processing a HTML text, the LinkFinder doesn't create links in headlines (<h1>, <h2>, ...) by default. It can be overridden by the option avoid_headlines:
+In case of processing a HTML text, the LinkFinder doesn't create links in headlines (&lt;h1&gt;, &lt;h2&gt;, ...) by default. It can be overridden by the option avoid_headlines:
 
     echo $lf->processHtml($html_document,["avoid_headlines" => false]);
 
