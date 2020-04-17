@@ -27,6 +27,7 @@ class LinkFinder{
 		"mailto_attrs" => array(),
 
 		"escape_html_entities" => true,
+		"avoid_headlines" => true, // when processing HTML text, whether to find and replace links in headlines (<h1>, <h2>, ...) or not?
 		"link_template" => '<a %attrs%>%url%</a>',
 		"mailto_template" => '<a %attrs%>%address%</a>',
 
@@ -226,6 +227,13 @@ class LinkFinder{
 		preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
 		foreach($matches[1] as $i => $match){
 			$tr_table[$match] = " _XatagX{$rnd}.{$i}_ "; // 'Click <a>here</a>' -> 'Click  _XatagX1234_ '
+		}
+
+		if($options["avoid_headlines"]){
+			preg_match_all('/(<(h\d+)(|\s[^<>]*)\/?>.*?<\/\2>)/si',$text,$matches);
+			foreach($matches[1] as $i => $match){
+				$tr_table[$match] = " _XhtagX{$rnd}.{$i}_ "; // '<h1>Title</h1>' -> ' _XhtagX1234_ '
+			}
 		}
 
 		// building replacements for existing tags

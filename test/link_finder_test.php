@@ -142,6 +142,29 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		);
 	}
 
+	function test_avoid_headlines(){
+		$src = '<h1>WWW.PROJECT.COM</h1><p>Welcome at www.project.com!</p>';
+		$lfinder = new LinkFinder();
+
+		// the default value is to avoid headlines
+		$this->assertEquals('<h1>WWW.PROJECT.COM</h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src));
+
+		//
+		$this->assertEquals('<h1>WWW.PROJECT.COM</h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src,array("avoid_headlines" => true)));
+		$this->assertEquals('<h1><a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a></h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src,array("avoid_headlines" => false)));
+
+		// setting default value into the constructor
+		$lfinder = new LinkFinder(array("avoid_headlines" => false));
+		$this->assertEquals('<h1><a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a></h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src));
+		$this->assertEquals('<h1>WWW.PROJECT.COM</h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src,array("avoid_headlines" => true)));
+
+		// avoid_headlines has no effect when processing a plain text
+		$lfinder = new LinkFinder();
+		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src));
+		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src,array("avoid_headlines" => true)));
+		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src,array("avoid_headlines" => false)));
+	}
+
 	function testLegacyUsage(){
 		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
 
