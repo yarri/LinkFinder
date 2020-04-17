@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.5] 2020-04-17
+- Added option avoid_headlines (default true) to control links creation in headlines (&lt;h1&gt;, &lt;h2&gt;, ....)
+- Added more generic TLDs (approx 40)
+
 ## [2.4.3] 2020-01-03
 - Fixes link recognition in angled braces (in a HTML snippet)
 
