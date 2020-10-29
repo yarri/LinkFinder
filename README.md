@@ -70,6 +70,12 @@ In case of processing a HTML text, the LinkFinder doesn't create links in headli
     $lf = new LinkFinder(["avoid_headlines" => false]);
     echo $lf->processHtml($html_document);
 
+List of secured websites can be specified in the options:
+
+    $lf = new LinkFinder(["secured_websites" => ["example.com", "webmail.example.com"]]);
+    echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com');
+    // Please, sign in at <a href="https://example.com/login/">example.com/login/</a> or <a href="https://webmail.example.com">webmail.example.com</a>
+
 
 Installation
 ------------

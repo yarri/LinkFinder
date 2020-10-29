@@ -28,6 +28,9 @@ class LinkFinder{
 
 		"escape_html_entities" => true,
 		"avoid_headlines" => true, // when processing HTML text, whether to find and replace links in headlines (<h1>, <h2>, ...) or not?
+
+		"secured_websites" => array(), // list of websites which are run on a secured web server - by default it is configured automatically in the constructor; e.g. ["www.example.com", "google.com"]
+
 		"link_template" => '<a %attrs%>%url%</a>',
 		"mailto_template" => '<a %attrs%>%address%</a>',
 
@@ -144,6 +147,12 @@ class LinkFinder{
 	);
 
 	function __construct($options = array()){
+		global $_SERVER;
+		if(!isset($options["secured_websites"]) && isset($_SERVER) && isset($_SERVER["HTTP_HOST"]) && isset($_SERVER["HTTPS"])){
+			if($_SERVER["HTTPS"]==="on"){
+				$options["secured_websites"] = array((string)$_SERVER["HTTP_HOST"]);
+			}
+		}
 		$this->_setOptions($options);
 	}
 
@@ -372,7 +381,13 @@ class LinkFinder{
 			$key = substr($key,0,-1);
 		}
 
-		$attrs["href"] = preg_match('/^[a-z]+:\/\//i',$key) ? $key : "http://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
+		if(preg_match('/^[a-z]+:\/\//i',$key)){
+			$attrs["href"] = $key;
+		}else{
+			$_hostname = preg_replace('/\/.*$/','',$key);
+			$schema = in_array(strtolower($_hostname),$options["secured_websites"]) ? "https" : "http";
+			$attrs["href"] = "$schema://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
+		}
 
 		$replace_key = $this->_getNewReplaceKey();
 
