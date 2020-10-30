@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6] 2020-10-30
+- Added option secured_websites
+- Project is being tested in PHP 8
+
 ## [2.5] 2020-04-17
 - Added option avoid_headlines (default true) to control links creation in headlines (&lt;h1&gt;, &lt;h2&gt;, ....)
 - Added more generic TLDs (approx 40)
