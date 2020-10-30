@@ -19,4 +19,4 @@ before_install:
   - composer update --dev
 
 script:
-  - ./vendor/bin/phpunit test/link_finder_test.php
+  - cd test && ../vendor/bin/run_unit_tests

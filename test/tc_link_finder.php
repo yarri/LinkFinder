@@ -1,7 +1,5 @@
 <?php
-use PHPUnit\Framework\TestCase;
-
-class LinkFinderTest extends TestCase{
+class TcLinkFinder extends TcBase{
 
 	function testBasicUsage(){
 		$lfinder = new LinkFinder();
