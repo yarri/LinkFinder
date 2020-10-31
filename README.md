@@ -48,23 +48,47 @@ Escaping of HTML entities is enabled by default:
 
 Creating missing links on URLs or emails in a HTML document:
 
-    $html_document = '<p>Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.</p>';
+    $html_document = '
+      <p>
+        Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.
+      </p>
+    ';
     $lf = new LinkFinder();
     echo $lf->processHtml($html_document);
-    // <p>Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.</p>
+    // <p>
+    //   Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.
+    // </p>
 
 Method $lf->processHtml() is actually an alias for $lf->process($html_document,["escape_html_entities" => false]).
+
+In case of processing a HTML text, the LinkFinder doesn't create links in headlines (&lt;h1&gt;, &lt;h2&gt;, ...) by default. It can be overridden by the option avoid_headlines:
+
+    echo $lf->processHtml($html_document,["avoid_headlines" => false]);
+
+    // or
+
+    $lf = new LinkFinder(["avoid_headlines" => false]);
+    echo $lf->processHtml($html_document);
+
+List of secured websites can be specified in the options:
+
+    $lf = new LinkFinder([
+      "secured_websites" => [
+        "example.com",
+        "webmail.example.com"
+       ]
+    ]);
+    echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com');
+    // Please, sign in at <a href="https://example.com/login/">example.com/login/</a> or <a href="https://webmail.example.com">webmail.example.com</a>
+
+If the secured_websites option is omitted and https protocol is active, the current HTTP host ($_SERVER["HTTP_HOST"]) will be added automatically.
 
 Installation
 ------------
 
-The best way how to install LinkFinder is to use a Composer:
+Just use the Composer:
 
     composer require yarri/link-finder
-
-or just download the latest version from Github:
-
-    wget https://raw.github.com/yarri/LinkFinder/master/src/link_finder.php
 
 Testing
 -------
@@ -75,7 +99,8 @@ Install required dependencies for development:
 
 Run tests:
 
-    ./test/run_tests.sh
+    cd test
+    ../vendor/bin/run_unit_tests
 
 License
 -------

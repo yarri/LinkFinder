@@ -3,6 +3,20 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.6] 2020-10-30
+- Added option secured_websites
+- Project is being tested in PHP 8
+
+## [2.5] 2020-04-17
+- Added option avoid_headlines (default true) to control links creation in headlines (&lt;h1&gt;, &lt;h2&gt;, ....)
+- Added more generic TLDs (approx 40)
+
+## [2.4.3] 2020-01-03
+- Fixes link recognition in angled braces (in a HTML snippet)
+
+## [2.4.2] 2020-01-01
+- Preventing of deletion of text containing an invalid UTF-8 character
+
 ## [2.4.1] 2019-12-05
 - Added detection of links in square brackets
 - Project is being tested in PHP 7.4

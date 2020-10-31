@@ -1,7 +1,5 @@
 <?php
-use PHPUnit\Framework\TestCase;
-
-class LinkFinderTest extends TestCase{
+class TcLinkFinder extends TcBase{
 
 	function testBasicUsage(){
 		$lfinder = new LinkFinder();
@@ -142,6 +140,29 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		);
 	}
 
+	function test_avoid_headlines(){
+		$src = '<h1>WWW.PROJECT.COM</h1><p>Welcome at www.project.com!</p>';
+		$lfinder = new LinkFinder();
+
+		// the default value is to avoid headlines
+		$this->assertEquals('<h1>WWW.PROJECT.COM</h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src));
+
+		//
+		$this->assertEquals('<h1>WWW.PROJECT.COM</h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src,array("avoid_headlines" => true)));
+		$this->assertEquals('<h1><a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a></h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src,array("avoid_headlines" => false)));
+
+		// setting default value into the constructor
+		$lfinder = new LinkFinder(array("avoid_headlines" => false));
+		$this->assertEquals('<h1><a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a></h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src));
+		$this->assertEquals('<h1>WWW.PROJECT.COM</h1><p>Welcome at <a href="http://www.project.com">www.project.com</a>!</p>',$lfinder->processHtml($src,array("avoid_headlines" => true)));
+
+		// avoid_headlines has no effect when processing a plain text
+		$lfinder = new LinkFinder();
+		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src));
+		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src,array("avoid_headlines" => true)));
+		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src,array("avoid_headlines" => false)));
+	}
+
 	function testLegacyUsage(){
 		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
 
@@ -249,20 +270,35 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"Lorem %s!",
 			"Brackets (%s)",
 			"Brackets (%s), Nice!",
-			"Angled Bbrackets <%s>",
+			"Brackets (%s); Nice!",
+			"Brackets (%s). Nice!",
+			"Angled Brackets <%s>",
 			"Angled Brackets <%s>, Nice!",
+			"Angled Brackets <%s>; Nice!",
+			"Angled Brackets <%s>. Nice!",
 			"Square Brackets [%s]",
 			"Square Brackets [%s], Nice!",
 			"Braces {%s}",
 			"Braces {%s}, Nice!",
+			"Braces {%s}; Nice!",
+			"Braces {%s}. Nice!",
 		);
 
 		$lfinder = new LinkFinder();
 
-		foreach($links as $src => $expected){
+		foreach($links as $link_src => $expected){
 			$expected = str_replace('&','&amp;',$expected); // "www.example.com/article.pl?id=123&format=raw" => "www.example.com/article.pl?id=123&amp;format=raw"
 			foreach($templates as $template){
-				$out = $lfinder->process($_src = sprintf($template,$src));
+				// LinkFinder::process()
+				$_src = sprintf($template,$link_src);
+				$out = $lfinder->process($_src);
+				$this->assertEquals(true,!!preg_match('/<a href="([^"]+)">/',$out,$matches),"$_src is containing a link");
+				$this->assertEquals($expected,$matches[1],"$_src is containing $expected");
+
+				// LinkFinder::processHtml()
+				$template = htmlspecialchars($template); // $template must be a valid HTML snippet
+				$_src = sprintf($template,htmlspecialchars($link_src));
+				$out = $lfinder->processHtml($_src);
 				$this->assertEquals(true,!!preg_match('/<a href="([^"]+)">/',$out,$matches),"$_src is containing a link");
 				$this->assertEquals($expected,$matches[1],"$_src is containing $expected");
 			}
@@ -289,5 +325,33 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			$out = $lfinder->process($str);
 			$this->assertEquals($str,$out,"\"$out\" should not contain a link");
 		}
+	}
+
+	function testSecuredWebsite(){
+		global $_SERVER;
+
+		$src = 'atk14.net, example.com/nice-page/, TWEATER.COM/?ok=1';
+
+		$_SERVER = array();
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
+		$lfinder = new LinkFinder(array("secured_websites" => array("example.com", "tweater.com","somewhere.com")));
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="https://example.com/nice-page/">example.com/nice-page/</a>, <a href="https://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
+		// Auto configuration
+		$_SERVER["HTTP_HOST"] = "atk14.net";
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
+		$_SERVER["HTTP_HOST"] = "atk14.net";
+		$_SERVER["HTTPS"] = "on";
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="https://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
+		$_SERVER["HTTP_HOST"] = "somewhere.org";
+		$_SERVER["HTTPS"] = "on";
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
 	}
 }

@@ -27,6 +27,10 @@ class LinkFinder{
 		"mailto_attrs" => array(),
 
 		"escape_html_entities" => true,
+		"avoid_headlines" => true, // when processing HTML text, whether to find and replace links in headlines (<h1>, <h2>, ...) or not?
+
+		"secured_websites" => array(), // list of websites which are run on a secured web server - by default it is configured automatically in the constructor; e.g. ["www.example.com", "google.com"]
+
 		"link_template" => '<a %attrs%>%url%</a>',
 		"mailto_template" => '<a %attrs%>%address%</a>',
 
@@ -78,31 +82,77 @@ class LinkFinder{
 		"za", "zm", "zw",
 
 		// Popular ICANN-era generic top-level domains
+		// https://domainnamestat.com/statistics/tldtype/new
 		// TODO: Add more
+		"adult",
 		"aero",
+		"app",
 		"army",
+		"asia",
 		"bargains",
 		"bid",
 		"biz",
 		"blog",
-		"codes",
+		"buzz",
+		"click",
 		"cloud",
+		"club",
+		"codes",
+		"date",
+		"design",
 		"dev",
+		"download",
 		"email",
 		"estate",
 		"expert",
+		"fun",
+		"gdn",
+		"host",
+		"icu",
 		"info",
 		"jobs",
 		"kitchen",
+		"kiwi",
+		"life",
+		"link",
+		"live",
+		"loan",
+		"ltd",
+		"men",
 		"mobi",
 		"name",
+		"online",
+		"party",
+		"pro",
+		"review",
+		"shop",
+		"site",
+		"space",
+		"store",
+		"stream",
 		"tech",
 		"tel",
+		"tokyo",
+		"top",
+		"trade",
 		"travel",
+		"vip",
+		"wang",
+		"website",
+		"win",
+		"work",
+		"world",
+		"xin",
 		"xyz",
 	);
 
 	function __construct($options = array()){
+		global $_SERVER;
+		if(!isset($options["secured_websites"]) && isset($_SERVER) && isset($_SERVER["HTTP_HOST"]) && isset($_SERVER["HTTPS"])){
+			if($_SERVER["HTTPS"]==="on"){
+				$options["secured_websites"] = array((string)$_SERVER["HTTP_HOST"]);
+			}
+		}
 		$this->_setOptions($options);
 	}
 
@@ -217,12 +267,22 @@ class LinkFinder{
 			);
 		}
 
-		$tr_table = array();
+		$tr_table = array(
+			"&lt;" => " .._XltX{$rnd}_.. ",
+			"&gt;" => " .._XgtX{$rnd}_.. ",
+		);
 
 		// building replacements for existing links (<a>...</a>)
 		preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
 		foreach($matches[1] as $i => $match){
 			$tr_table[$match] = " _XatagX{$rnd}.{$i}_ "; // 'Click <a>here</a>' -> 'Click  _XatagX1234_ '
+		}
+
+		if($options["avoid_headlines"]){
+			preg_match_all('/(<(h\d+)(|\s[^<>]*)\/?>.*?<\/\2>)/si',$text,$matches);
+			foreach($matches[1] as $i => $match){
+				$tr_table[$match] = " _XhtagX{$rnd}.{$i}_ "; // '<h1>Title</h1>' -> ' _XhtagX1234_ '
+			}
 		}
 
 		// building replacements for existing tags
@@ -321,7 +381,13 @@ class LinkFinder{
 			$key = substr($key,0,-1);
 		}
 
-		$attrs["href"] = preg_match('/^[a-z]+:\/\//i',$key) ? $key : "http://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
+		if(preg_match('/^[a-z]+:\/\//i',$key)){
+			$attrs["href"] = $key;
+		}else{
+			$_hostname = preg_replace('/\/.*$/','',$key);
+			$schema = in_array(strtolower($_hostname),$options["secured_websites"]) ? "https" : "http";
+			$attrs["href"] = "$schema://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
+		}
 
 		$replace_key = $this->_getNewReplaceKey();
 
