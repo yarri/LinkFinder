@@ -93,6 +93,10 @@ Just use the Composer:
 Testing
 -------
 
+The LinkFinder is tested automatically using Travis CI in PHP 5.3 to PHP 8.0.
+
+For the tests execution, the package [atk14/tester](https://packagist.org/packages/atk14/tester) is used. It is just a wrapper for [phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit).
+
 Install required dependencies for development:
 
     composer update --dev
