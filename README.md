@@ -72,10 +72,16 @@ In case of processing a HTML text, the LinkFinder doesn't create links in headli
 
 List of secured websites can be specified in the options:
 
-    $lf = new LinkFinder(["secured_websites" => ["example.com", "webmail.example.com"]]);
+    $lf = new LinkFinder([
+      "secured_websites" => [
+        "example.com",
+        "webmail.example.com"
+       ]
+    ]);
     echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com');
     // Please, sign in at <a href="https://example.com/login/">example.com/login/</a> or <a href="https://webmail.example.com">webmail.example.com</a>
 
+If the secured_websites option is omitted and https protocol is active, the current HTTP host ($_SERVER["HTTP_HOST"]) will be added automatically.
 
 Installation
 ------------
@@ -93,7 +99,8 @@ Install required dependencies for development:
 
 Run tests:
 
-    ./test/run_tests.sh
+    cd test
+    ../vendor/bin/run_unit_tests
 
 License
 -------
