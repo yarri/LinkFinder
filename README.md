@@ -12,7 +12,6 @@ Usage
 -----
 
 ```php
-
 $text = '
   Welcome at www.example.com!
   Contact us on info@example.com.
@@ -21,9 +20,8 @@ $text = '
 $lf = new LinkFinder();
 echo $lf->process($text);
 
-// ... this prints out
-//  Welcome at <a href="http://www.example.com/">www.example.com</a>!
-//  Contact us on <a href="mailto:info@example.com">info@example.com</a>.
+// Welcome at <a href="http://www.example.com/">www.example.com</a>!
+// Contact us on <a href="mailto:info@example.com">info@example.com</a>.
 ```
 
 Extra attributes for ```<a>``` and ```<a href="mailto:...">``` elements can be specified in options:
@@ -35,14 +33,17 @@ $lf = new LinkFinder([
 ]);
 echo $lf->process($text);
 
-// ... this prints out
-//  Welcome at <a class="external-link" href="http://www.example.com/" target="_blank" rel="nofollow">www.example.com</a>!
-//  Contact us on <a class="external-email" href="mailto:info@example.com">info@example.com</a>.
+// Welcome at <a class="external-link" href="http://www.example.com/" target="_blank" rel="nofollow">www.example.com</a>!
+// Contact us on <a class="external-email" href="mailto:info@example.com">info@example.com</a>.
 ```
 
 Escaping of HTML entities is enabled by default:
+
 ```php
-$text = 'Find more at <http://www.ourstore.com/>';
+$text = '
+  Find more at
+  <http://www.ourstore.com/>
+';
 
 $lf = new LinkFinder();
 echo $lf->process($text);
@@ -52,8 +53,8 @@ echo $lf->process($text);
 ```
 
 Creating missing links on URLs or emails in a HTML document:
-```php
 
+```php
 $html_document = '
   <p>
     Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.
@@ -67,6 +68,7 @@ echo $lf->processHtml($html_document);
 //   Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.
 // </p>
 ```
+
 Method `$lf->processHtml()` is actually an alias for `$lf->process($html_document,["escape_html_entities" => false])`.
 
 In case of processing a HTML text, the LinkFinder doesn't create links in headlines (`<h1>`, `<h2>`, ...) by default. It can be overridden by the option avoid_headlines:
@@ -81,8 +83,8 @@ echo $lf->processHtml($html_document);
 ```
 
 List of secured websites can be specified in the options:
-```php
 
+```php
 $lf = new LinkFinder([
   "secured_websites" => [
     "example.com",
@@ -93,7 +95,8 @@ echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com'
 
 // Please, sign in at <a href="https://example.com/login/">example.com/login/</a> or <a href="https://webmail.example.com">webmail.example.com</a>
 ```
-If the secured_websites option is omitted and https protocol is active, the current HTTP host ($_SERVER["HTTP_HOST"]) will be added automatically.
+
+If the secured_websites option is omitted and https protocol is active, the current HTTP host (```$_SERVER["HTTP_HOST"]```) will be added automatically.
 
 Installation
 ------------
