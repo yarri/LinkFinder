@@ -1,7 +1,7 @@
 LinkFinder
 ==========
 
-[![Build Status](https://travis-ci.org/yarri/LinkFinder.svg?branch=master)](https://travis-ci.org/yarri/LinkFinder)
+[![Build Status](https://travis-ci.com/yarri/LinkFinder.svg?branch=master)](https://travis-ci.com/yarri/LinkFinder)
 [![Downloads](https://img.shields.io/packagist/dt/yarri/link-finder.svg)](https://packagist.org/packages/yarri/link-finder)
 [![Codacy Project Certification](https://api.codacy.com/project/badge/Grade/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yarri/LinkFinder&amp;utm_campaign=Badge_Grade)
 [![Coverage](https://api.codacy.com/project/badge/Coverage/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&utm_medium=referral&utm_content=yarri/LinkFinder&utm_campaign=Badge_Coverage)
