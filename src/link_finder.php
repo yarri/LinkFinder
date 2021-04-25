@@ -29,6 +29,8 @@ class LinkFinder{
 		"escape_html_entities" => true,
 		"avoid_headlines" => true, // when processing HTML text, whether to find and replace links in headlines (<h1>, <h2>, ...) or not?
 
+		"shorten_long_urls" => true,
+
 		"secured_websites" => array(), // list of websites which are run on a secured web server - by default it is configured automatically in the constructor; e.g. ["www.example.com", "google.com"]
 
 		"link_template" => '<a %attrs%>%url%</a>',
@@ -391,7 +393,9 @@ class LinkFinder{
 
 		$replace_key = $this->_getNewReplaceKey();
 
-		$this->__replaces[$replace_key] = $this->_renderTemplate($options["link_template"],$attrs,array("%url%" => $key));
+		$this->__replaces[$replace_key] = $this->_renderTemplate($options["link_template"],$attrs,array(
+			"%url%" => $options["shorten_long_urls"] ? $this->_shortenUrl($key) : $key
+		));
 
 		return $first_char.$replace_key.$tail;
 	}
@@ -424,5 +428,24 @@ class LinkFinder{
 
 		$counter++;
 		return " Xreplace.{$rnd}.{$counter}X ";
+	}
+
+	protected function _shortenUrl($url){
+		$max_acceptable_length = 50;
+		if(strlen($url)<=$max_acceptable_length){
+			return $url;
+		}
+		preg_match('/^(?<proto>((ftp|https?):\/\/)|)(?<domain>[^\/]+)(?<uri>\/.*)$/',$url,$matches);
+
+		if(strlen($matches["uri"])<10){
+			return $url;
+		}
+
+		$out = $matches["proto"].$matches["domain"];
+		$length = $max_acceptable_length - strlen($out);
+		if($length<5){ $length = 5; }
+		$out = $out.substr($matches["uri"],0,$length)."...";
+
+		return $out;
 	}
 }
