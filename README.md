@@ -98,6 +98,12 @@ echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com'
 
 If the secured_websites option is omitted and https protocol is active, the current HTTP host (```$_SERVER["HTTP_HOST"]```) will be added automatically.
 
+Long URLs are automatically shortened. If the shortening is not desired behaviour, option shorten_long_urls should be set to false:
+
+```php
+$lf = new LinkFinder(["shorten_long_urls" => false]);
+```
+
 Installation
 ------------
 
