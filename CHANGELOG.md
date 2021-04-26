@@ -3,6 +3,9 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7] 2021-04-26
+- Long URLs are automatically shortened to a maximum of 70 characters. It can be disabled with option shorten_long_urls set to false.
+
 ## [2.6] 2020-10-30
 - Added option secured_websites
 - Project is being tested in PHP 8
