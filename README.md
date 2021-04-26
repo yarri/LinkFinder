@@ -1,7 +1,7 @@
 LinkFinder
 ==========
 
-[![Build Status](https://travis-ci.org/yarri/LinkFinder.svg?branch=master)](https://travis-ci.org/yarri/LinkFinder)
+[![Build Status](https://travis-ci.com/yarri/LinkFinder.svg?branch=master)](https://travis-ci.com/yarri/LinkFinder)
 [![Downloads](https://img.shields.io/packagist/dt/yarri/link-finder.svg)](https://packagist.org/packages/yarri/link-finder)
 [![Codacy Project Certification](https://api.codacy.com/project/badge/Grade/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yarri/LinkFinder&amp;utm_campaign=Badge_Grade)
 [![Coverage](https://api.codacy.com/project/badge/Coverage/e9ba7e40320b41c9a2caff1bcc85f16f)](https://www.codacy.com/app/jaromir.tomek/LinkFinder?utm_source=github.com&utm_medium=referral&utm_content=yarri/LinkFinder&utm_campaign=Badge_Coverage)
@@ -97,6 +97,26 @@ echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com'
 ```
 
 If the secured_websites option is omitted and https protocol is active, the current HTTP host (```$_SERVER["HTTP_HOST"]```) will be added automatically.
+
+#### Long URLs shortening
+
+Long URLs are automatically shortened to a maximum of 70 characters. For example, the following URL:
+
+```
+https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/
+```
+
+will be converted to:
+
+```
+<a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-country-tropica...</a>
+```
+
+If the shortening is not desired behaviour, option shorten_long_urls should be set to false:
+
+```php
+$lf = new LinkFinder(["shorten_long_urls" => false]);
+```
 
 Installation
 ------------
