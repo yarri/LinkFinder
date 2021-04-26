@@ -431,7 +431,7 @@ class LinkFinder{
 	}
 
 	protected function _shortenUrl($url){
-		$max_acceptable_length = 50;
+		$max_acceptable_length = 65; // In emails, lines should not be larger than 70 characters.
 		if(strlen($url)<=$max_acceptable_length){
 			return $url;
 		}
@@ -442,7 +442,7 @@ class LinkFinder{
 		}
 
 		$out = $matches["proto"].$matches["domain"];
-		$length = $max_acceptable_length - strlen($out);
+		$length = $max_acceptable_length - strlen($out) - 3; // 3 for "..."
 		if($length<5){ $length = 5; }
 		$out = $out.substr($matches["uri"],0,$length)."...";
 

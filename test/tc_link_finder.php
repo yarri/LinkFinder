@@ -359,7 +359,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$src = 'Long URL: https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/, short URL: https://cz.ign.com/se/?q=mario';
 
 		$lfinder = new LinkFinder();
-		$this->assertEquals('Long URL: <a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-cou...</a>, short URL: <a href="https://cz.ign.com/se/?q=mario">https://cz.ign.com/se/?q=mario</a>',$lfinder->process($src));
+		$this->assertEquals('Long URL: <a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-country-tropica...</a>, short URL: <a href="https://cz.ign.com/se/?q=mario">https://cz.ign.com/se/?q=mario</a>',$lfinder->process($src));
 
 		$lfinder = new LinkFinder(array("shorten_long_urls" => false));
 		$this->assertEquals('Long URL: <a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/</a>, short URL: <a href="https://cz.ign.com/se/?q=mario">https://cz.ign.com/se/?q=mario</a>',$lfinder->process($src));
