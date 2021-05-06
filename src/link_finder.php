@@ -435,7 +435,10 @@ class LinkFinder{
 		if(strlen($url)<=$max_acceptable_length){
 			return $url;
 		}
-		preg_match('/^(?<proto>((ftp|https?):\/\/)|)(?<domain>[^\/]+)(?<uri>\/.*)$/',$url,$matches);
+		if(!preg_match('/^(?<proto>((ftp|https?):\/\/)|)(?<domain>[^\/]+)(?<uri>\/.*|)$/i',$url,$matches)){
+			// Actually, this should not happen. $url should be a valid URL and the pattern should catch them all.
+			return $url;
+		}
 
 		if(strlen($matches["uri"])<10){
 			return $url;

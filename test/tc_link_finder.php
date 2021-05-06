@@ -364,4 +364,12 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$lfinder = new LinkFinder(array("shorten_long_urls" => false));
 		$this->assertEquals('Long URL: <a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/</a>, short URL: <a href="https://cz.ign.com/se/?q=mario">https://cz.ign.com/se/?q=mario</a>',$lfinder->process($src));
 	}
+
+	// https://github.com/yarri/LinkFinder/issues/5
+	function testIssue5(){
+		$src = '501018655941-lu5e4mhrmo1opkef4d8b7i5tpgjj84ac.apps.googleusercontent.com';
+
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="http://501018655941-lu5e4mhrmo1opkef4d8b7i5tpgjj84ac.apps.googleusercontent.com">501018655941-lu5e4mhrmo1opkef4d8b7i5tpgjj84ac.apps.googleusercontent.com</a>',$lfinder->process($src));
+	}
 }
