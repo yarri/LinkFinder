@@ -204,7 +204,7 @@ class LinkFinder{
 		$this->__replaces = array();
 
 		// Data for patterns
-		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/=;\[\]]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: !$'()*`,
+		$url_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/=;\[\]$!]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()*`,
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]+"; // without dot
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
 		$top_level_domains = "(".join("|",$this->top_level_domains).")";
@@ -373,7 +373,7 @@ class LinkFinder{
 
 		$tail = "";
 
-		if(preg_match("/^(.+?)([.,;]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
+		if(preg_match("/^(.+?)([.,;!]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
 			$key = $_matches[1];
 			$tail = $_matches[2];
 		}

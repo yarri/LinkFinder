@@ -253,7 +253,11 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 			"http://domain.com/var=[ID]" => "http://domain.com/var=[ID]",
 
-			//"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898", // TODO:
+			// exclamation mark
+			"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898",
+
+			// dollar sign
+			"https://odysee.com/$/verify?auth_token=vSDU4T3iSsFMDcV5Sga4JS4ZxSxfexDs&email=link%40finder.com&needs_recaptcha=false&verification_token=z332ov3912BfeXrfhX5p4n3PwSYUF3HE" => "https://odysee.com/$/verify?auth_token=vSDU4T3iSsFMDcV5Sga4JS4ZxSxfexDs&email=link%40finder.com&needs_recaptcha=false&verification_token=z332ov3912BfeXrfhX5p4n3PwSYUF3HE"
 		);
 
 		$templates = array(
