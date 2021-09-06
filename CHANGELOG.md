@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.2] 2021-09-06
+- URL can include exclamation mark and dollar sign
+- A domain name part can be one character long (e.g. i.example.com)
+
 ## [2.7.1] 2021-05-06
 - Function for URL shortening fixed
 
