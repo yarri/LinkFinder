@@ -257,7 +257,10 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"http://grooveshark.com/#!/album/AirMech/8457898" => "http://grooveshark.com/#!/album/AirMech/8457898",
 
 			// dollar sign
-			"https://odysee.com/$/verify?auth_token=vSDU4T3iSsFMDcV5Sga4JS4ZxSxfexDs&email=link%40finder.com&needs_recaptcha=false&verification_token=z332ov3912BfeXrfhX5p4n3PwSYUF3HE" => "https://odysee.com/$/verify?auth_token=vSDU4T3iSsFMDcV5Sga4JS4ZxSxfexDs&email=link%40finder.com&needs_recaptcha=false&verification_token=z332ov3912BfeXrfhX5p4n3PwSYUF3HE"
+			"https://odysee.com/$/verify?auth_token=vSDU4T3iSsFMDcV5Sga4JS4ZxSxfexDs&email=link%40finder.com&needs_recaptcha=false&verification_token=z332ov3912BfeXrfhX5p4n3PwSYUF3HE" => "https://odysee.com/$/verify?auth_token=vSDU4T3iSsFMDcV5Sga4JS4ZxSxfexDs&email=link%40finder.com&needs_recaptcha=false&verification_token=z332ov3912BfeXrfhX5p4n3PwSYUF3HE",
+
+			// only one character in a domain name part
+			"https://e.targito.com/c?a=1b4cba18-09e1-49c6-8933-7fadbe8e7395&o=atk14net&m=0725cccc-e58b-46f5-86ee-36c9c5ee7ddb" => "https://e.targito.com/c?a=1b4cba18-09e1-49c6-8933-7fadbe8e7395&o=atk14net&m=0725cccc-e58b-46f5-86ee-36c9c5ee7ddb",
 		);
 
 		$templates = array(
