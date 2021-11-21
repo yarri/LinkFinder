@@ -224,6 +224,9 @@ class LinkFinder{
 		// urls starting with www.
 		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$url_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
 
+		// urls without leading www., http://, ... and with something in URI part which may look like an email address (e.g. mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm)
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port\/$url_allowed_chars+)/i$utf8",array($this,"_replaceLink"),$text);
+
 		// emails
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$utf8",array($this,"_replaceEmail"),$text);
 

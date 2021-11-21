@@ -261,6 +261,8 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 			// only one character in a domain name part
 			"https://e.targito.com/c?a=1b4cba18-09e1-49c6-8933-7fadbe8e7395&o=atk14net&m=0725cccc-e58b-46f5-86ee-36c9c5ee7ddb" => "https://e.targito.com/c?a=1b4cba18-09e1-49c6-8933-7fadbe8e7395&o=atk14net&m=0725cccc-e58b-46f5-86ee-36c9c5ee7ddb",
+
+			"mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm" => "http://mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm",
 		);
 
 		$templates = array(
@@ -378,5 +380,12 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 		$lfinder = new LinkFinder();
 		$this->assertEquals('<a href="http://501018655941-lu5e4mhrmo1opkef4d8b7i5tpgjj84ac.apps.googleusercontent.com">501018655941-lu5e4mhrmo1opkef4d8b7i5tpgjj84ac.apps.googleusercontent.com</a>',$lfinder->process($src));
+	}
+
+	function testIssue(){
+		$src = ' "https://www.mill.cz/vyhledavani/vyhledej.htm?search=hardline"; ';
+
+		$lfinder = new LinkFinder();
+		$this->assertEquals(' "<a href="https://www.mill.cz/vyhledavani/vyhledej.htm?search=hardline">https://www.mill.cz/vyhledavani/vyhledej.htm?search=hardline</a>"; ',$lfinder->processHtml($src));
 	}
 }
