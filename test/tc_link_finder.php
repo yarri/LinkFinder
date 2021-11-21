@@ -384,8 +384,15 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 	function testIssue(){
 		$src = ' "https://www.mill.cz/vyhledavani/vyhledej.htm?search=hardline"; ';
-
 		$lfinder = new LinkFinder();
 		$this->assertEquals(' "<a href="https://www.mill.cz/vyhledavani/vyhledej.htm?search=hardline">https://www.mill.cz/vyhledavani/vyhledej.htm?search=hardline</a>"; ',$lfinder->processHtml($src));
+
+		$src = 'Zatím ve dvou barvách <a
+href="https://www.mill.cz/vyhledavani/vyhledej.htm?search=irbis">v našem
+e-shopu</a>';
+		$lfinder = new LinkFinder();
+		$this->assertEquals('Zatím ve dvou barvách &lt;a
+href=&quot;<a href="https://www.mill.cz/vyhledavani/vyhledej.htm?search=irbis">https://www.mill.cz/vyhledavani/vyhledej.htm?search=irbis</a>&quot;&gt;v našem
+e-shopu&lt;/a&gt;',$lfinder->process($src));
 	}
 }
