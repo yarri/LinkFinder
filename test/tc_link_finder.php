@@ -263,6 +263,10 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"https://e.targito.com/c?a=1b4cba18-09e1-49c6-8933-7fadbe8e7395&o=atk14net&m=0725cccc-e58b-46f5-86ee-36c9c5ee7ddb" => "https://e.targito.com/c?a=1b4cba18-09e1-49c6-8933-7fadbe8e7395&o=atk14net&m=0725cccc-e58b-46f5-86ee-36c9c5ee7ddb",
 
 			"mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm" => "http://mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm",
+
+			// URLs with asterisk
+			"http://wayback.archive.org/web/*/http://google.com" => "http://wayback.archive.org/web/*/http://google.com",
+			"example.com/K/Ko%c4%8dka*Testovac%c3%ad*CZ1252156***19100101*CO01*2*2*20210118*20210118*V1CZ00024341250212071710463" => "http://example.com/K/Ko%c4%8dka*Testovac%c3%ad*CZ1252156***19100101*CO01*2*2*20210118*20210118*V1CZ00024341250212071710463",
 		);
 
 		$templates = array(
