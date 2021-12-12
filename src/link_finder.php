@@ -204,7 +204,9 @@ class LinkFinder{
 		$this->__replaces = array();
 
 		// Data for patterns
-		$uri_allowed_chars = "[-a-zA-Z0-9@:%_+.~#?&\\/=;\[\]$!*]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()`,
+		$uri_allowed_chars = "[-a-zA-Z0-9@:%_+.~#&\\/=;\[\]$!*]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()`,
+		$uri = "(\\/$uri_allowed_chars*|\\/|)(\\?$uri_allowed_chars*|)";
+		$not_empty_uri = "((\\/$uri_allowed_chars*|\\/)(\\?$uri_allowed_chars*|)|\\?$uri_allowed_chars*)";
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot, domain name part can be just 1 character long
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
 		$top_level_domains = "(".join("|",$this->top_level_domains).")";
@@ -212,26 +214,26 @@ class LinkFinder{
 		$password_chars = $username_chars;
 
 		// urls starting with http://, https://, ftp:/ and containing username and password
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port(\/$uri_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
 		if(strlen($text)==0){
 			// perhaps there is an invalid UTF-8 char in $text
 			return $text_orig;
 		}
 
 		// urls starting with http://, https://, ftp:/
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port(\/$uri_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
 
 		// urls starting with www.
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port(\/$uri_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
 
 		// urls without leading www., http://, ... and with something in URI part which may look like an email address (e.g. mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm)
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port\/$uri_allowed_chars+)/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$not_empty_uri)/i$utf8",array($this,"_replaceLink"),$text);
 
 		// emails
 		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$utf8",array($this,"_replaceEmail"),$text);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port\b(\/$uri_allowed_chars*|))/i$utf8",array($this,"_replaceLink"),$text);
+		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
 
 		$text = strtr($text,$this->__replaces);
 

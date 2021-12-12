@@ -267,6 +267,10 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			// URLs with asterisk
 			"http://wayback.archive.org/web/*/http://google.com" => "http://wayback.archive.org/web/*/http://google.com",
 			"example.com/K/Ko%c4%8dka*Testovac%c3%ad*CZ1252156***19100101*CO01*2*2*20210118*20210118*V1CZ00024341250212071710463" => "http://example.com/K/Ko%c4%8dka*Testovac%c3%ad*CZ1252156***19100101*CO01*2*2*20210118*20210118*V1CZ00024341250212071710463",
+
+			// no slash before question mark
+			"https://example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01" => "https://example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01",
+			"example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01" => "http://example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01",
 		);
 
 		$templates = array(
