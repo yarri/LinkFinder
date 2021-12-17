@@ -214,26 +214,26 @@ class LinkFinder{
 		$password_chars = $username_chars;
 
 		// urls starting with http://, https://, ftp:/ and containing username and password
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 		if(strlen($text)==0){
 			// perhaps there is an invalid UTF-8 char in $text
 			return $text_orig;
 		}
 
 		// urls starting with http://, https://, ftp:/
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 
 		// urls starting with www.
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 
 		// urls without leading www., http://, ... and with something in URI part which may look like an email address (e.g. mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm)
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$not_empty_uri)/i$utf8",array($this,"_replaceLink"),$text);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$not_empty_uri)","_replaceLink",$text,$options);
 
 		// emails
-		$text = preg_replace_callback("/(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)/i$utf8",array($this,"_replaceEmail"),$text);
+		$text = $this->_pregReplaceCallback("(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)","_replaceEmail",$text,$options);
 
 		// urls without leading www., http://, ...
-		$text = preg_replace_callback("/(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$uri)/i$utf8",array($this,"_replaceLink"),$text);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$uri)","_replaceLink",$text,$options);
 
 		$text = strtr($text,$this->__replaces);
 
@@ -244,6 +244,21 @@ class LinkFinder{
 
 		$text = strtr($text,$tr_table_rev);
 
+		return $text;
+	}
+
+	protected function _pregReplaceCallback($pattern,$method,$text,$options){
+		$utf8 = $options["utf8"] ? "u" : "";
+		// links or emails in parentheses must by properly detected
+		$parentheses = array(
+			'\[' => '\]',
+			'\(' => '\)',
+			'\{' => '\}',
+			'' => '',
+		);
+		foreach($parentheses as $leading_parenthesis => $ending_parenthesis){
+			$text = preg_replace_callback("/(?<leading_parenthesis>$leading_parenthesis)$pattern(?<ending_parenthesis>$ending_parenthesis)/i$utf8",array($this,$method),$text);
+		}
 		return $text;
 	}
 
@@ -372,21 +387,26 @@ class LinkFinder{
 		$first_char = $matches["first_char"];
 		$key = trim($matches["link"]);
 
+		$leading_parenthesis = $matches["leading_parenthesis"];
+		$ending_parenthesis = $matches["ending_parenthesis"];
+
 		if(in_array($first_char,array('/','.'))){
 			return $matches[0];
 		}
 
 		$tail = "";
 
-		if(preg_match("/^(.+?)([.,;!]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
+		if(!$leading_parenthesis && preg_match("/^(.+?)([.,;!]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
 			$key = $_matches[1];
 			$tail = $_matches[2];
 		}
 
+		/*
 		if($first_char=="[" && preg_match('/\]$/',$key)){ // [http://www.example.com/]  -> [<a href="http://www.example.com/">http://www.example.com/</a>]
 			$tail = "]".$tail;
 			$key = substr($key,0,-1);
 		}
+		*/
 
 		if(preg_match('/^[a-z]+:\/\//i',$key)){
 			$attrs["href"] = $key;
@@ -402,7 +422,7 @@ class LinkFinder{
 			"%url%" => $options["shorten_long_urls"] ? $this->_shortenUrl($key) : $key
 		));
 
-		return $first_char.$replace_key.$tail;
+		return $leading_parenthesis.$first_char.$replace_key.$tail.$ending_parenthesis;
 	}
 
 	protected function _replaceEmail($matches){
@@ -411,6 +431,9 @@ class LinkFinder{
 
 		$address = trim($matches["address"]);
 		$ending_interrupter = ($matches["ending_interrupter"]);
+
+		$leading_parenthesis = $matches["leading_parenthesis"];
+		$ending_parenthesis = $matches["ending_parenthesis"];
 
 		$replace_key = $this->_getNewReplaceKey();
 
@@ -423,7 +446,7 @@ class LinkFinder{
 
 		$this->__replaces[$replace_key] = $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $address));
 
-		return $replace_key.$ending_interrupter;
+		return $leading_parenthesis.$replace_key.$ending_interrupter.$ending_parenthesis;
 	}
 
 	protected function _getNewReplaceKey(){

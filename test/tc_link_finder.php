@@ -293,12 +293,25 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"Angled Brackets <%s>, Nice!",
 			"Angled Brackets <%s>; Nice!",
 			"Angled Brackets <%s>. Nice!",
+			//
 			"Square Brackets [%s]",
 			"Square Brackets [%s], Nice!",
+			"Square Brackets, italic _[%s]_",
+			"Square Brackets, italic _[%s]_, Nice!",
+			//
+			"Brackets (%s)",
+			"Brackets (%s), Nice!",
+			"Brackets, italic _(%s)_",
+			"Brackets, italic _(%s)_, Nice!",
+			//
 			"Braces {%s}",
 			"Braces {%s}, Nice!",
 			"Braces {%s}; Nice!",
 			"Braces {%s}. Nice!",
+			"Braces, italic _{%s}_",
+			"Braces, italic _{%s}_, Nice!",
+			"Braces, italic _{%s}_; Nice!",
+			"Braces, italic _{%s}_. Nice!",
 		);
 
 		$lfinder = new LinkFinder();
