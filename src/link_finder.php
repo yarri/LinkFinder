@@ -227,13 +227,13 @@ class LinkFinder{
 		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 
 		// urls without leading www., http://, ... and with something in URI part which may look like an email address (e.g. mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm)
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$not_empty_uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains\\b$optional_port$not_empty_uri)","_replaceLink",$text,$options);
 
 		// emails
 		$text = $this->_pregReplaceCallback("(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)","_replaceEmail",$text,$options);
 
 		// urls without leading www., http://, ...
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains$optional_port$uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains\\b$optional_port$uri)","_replaceLink",$text,$options);
 
 		$text = strtr($text,$this->__replaces);
 

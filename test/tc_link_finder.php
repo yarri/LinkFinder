@@ -346,7 +346,9 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"/var/www/app.com/index.html",
 			"/var/www/www.app.com/index.html",
 			'.example.com',
-			'.www.example.com'
+			'.www.example.com',
+			'Dostali jsme žádost o reset vašeho Facebook hesla.Zadejte tento kód pro reset', // hesla.Za
+			'Bolí vás r-a.mena a krk' // r-a.me
 		);
 
 		$lfinder = new LinkFinder();
