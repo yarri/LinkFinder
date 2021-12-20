@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.5] 2021-12-20
+
+* ce2cec3 - Fixed false detection of URLs
+
 ## [2.7.4] 2021-12-17
 
 * 85317e4 - URLs and emails in parentheses are correctly recognized (e.g. _[http://www.example.com/]_, [http://www.example.com/]:)
