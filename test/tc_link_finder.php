@@ -418,4 +418,15 @@ e-shopu</a>';
 href=&quot;<a href="https://www.mill.cz/vyhledavani/vyhledej.htm?search=irbis">https://www.mill.cz/vyhledavani/vyhledej.htm?search=irbis</a>&quot;&gt;v našem
 e-shopu&lt;/a&gt;',$lfinder->process($src));
 	}
+
+	function testIssueHtmlEntity(){
+		$src = '<p>Pages about the original Markdown can be found at https://daringfireball.net/projects/markdown/.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#8617;&#xFE0E;</a></p>';
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<p>Pages about the original Markdown can be found at <a href="https://daringfireball.net/projects/markdown/">https://daringfireball.net/projects/markdown/</a>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#8617;&#xFE0E;</a></p>',$lfinder->processHtml($src));
+
+		$src = '<p>URL1: http://www.example.com/&#xFE0E; URL2: http://www.example.com/page.html&#8617;</p>';
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<p>URL1: <a href="http://www.example.com/">http://www.example.com/</a>&#xFE0E; URL2: <a href="http://www.example.com/page.html">http://www.example.com/page.html</a>&#8617;</p>',$lfinder->processHtml($src));
+
+	}
 }

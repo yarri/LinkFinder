@@ -280,19 +280,21 @@ class LinkFinder{
 	protected function _prepareTextTrTable($text,$options){
 		$rnd = uniqid();
 
-		if($options["escape_html_entities"]){
-			return array(
-				"&amp;" => "Xampicek{$rnd}X",
-				"&lt;" => " .._XltX{$rnd}_.. ",
-				"&gt;" => " .._XgtX{$rnd}_.. ",
-				"&quot;" => " .._XquotX{$rnd}_.. ",
-			);
-		}
-
 		$tr_table = array(
 			"&lt;" => " .._XltX{$rnd}_.. ",
 			"&gt;" => " .._XgtX{$rnd}_.. ",
 		);
+
+		preg_match_all('/(\&(#\d{2,6}|#x([A-Fa-f0-9]{2}){1,3});)/',$text,$matches);
+		foreach($matches[1] as $i => $match){
+			$tr_table[$match] = " _XentityX{$rnd}.{$i}_ ";
+		}
+
+		if($options["escape_html_entities"]){
+			$tr_table["&amp;"] = "Xampicek{$rnd}X";
+			$tr_table["&quot;"] = " .._XquotX{$rnd}_.. ";
+			return $tr_table;
+		}
 
 		// building replacements for existing links (<a>...</a>)
 		preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
