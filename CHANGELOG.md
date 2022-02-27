@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.7] 2022-02-27
+
+* 4c214d0 - Added some more popular generic top-level domains
+
 ## [2.7.6] 2022-02-14
 
 * 16b2ae1 - Resolved issue with HTML entities
