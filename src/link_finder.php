@@ -499,9 +499,8 @@ class LinkFinder{
 		}
 		*/
 
-		if(preg_match('/^[a-z]+:\/\//i',$key)){
-			$attrs["href"] = $key;
-		}else{
+		$attrs["href"] = $key;
+		if(!preg_match('/^[a-z]+:\/\//i',$key)){
 			$_hostname = preg_replace('/\/.*$/','',$key);
 			$schema = in_array(strtolower($_hostname),$options["secured_websites"]) ? "https" : "http";
 			$attrs["href"] = "$schema://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
