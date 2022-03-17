@@ -270,7 +270,6 @@ class LinkFinder{
 
 		$attrs = $options["attrs"];
 		$mailto_attrs = $options["mailto_attrs"];
-		$utf8 = $options["utf8"] ? "u" : "";
 
 		$tr_table = $this->_prepareTextTrTable($text,$options);
 		$tr_table_rev = sizeof($tr_table)>0 ? array_combine(array_values($tr_table),array_keys($tr_table)) : array(); // in PHP5.3 parameters of array_combine should have at least 1 element
