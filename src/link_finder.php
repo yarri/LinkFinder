@@ -550,8 +550,8 @@ class LinkFinder{
 	}
 
 	protected function _shortenUrl($url){
-		$max_acceptable_length = 65; // In emails, lines should not be larger than 70 characters.
-		if(strlen($url)<=$max_acceptable_length){
+		$max_length = 65; // In emails, lines should not be larger than 70 characters.
+		if(strlen($url)<=$max_length){
 			return $url;
 		}
 		if(!preg_match('/^(?<proto>((ftp|https?):\/\/)|)(?<domain>[^\/]+)(?<uri>\/.*|)$/i',$url,$matches)){
@@ -564,7 +564,7 @@ class LinkFinder{
 		}
 
 		$out = $matches["proto"].$matches["domain"];
-		$length = $max_acceptable_length - strlen($out) - 3; // 3 for "..."
+		$length = $max_length - strlen($out) - 3; // 3 for "..."
 		if($length<5){ $length = 5; }
 		$out = $out.substr($matches["uri"],0,$length)."...";
 
