@@ -4,14 +4,11 @@ os: linux
 # Partner Queue Solution, no credits are consumed
 arch: ppc64le
 
-dist: bionic
+dist: focal
 
 language: php
 
 php:
-  - 7.1
-  - 7.2
-  - 7.3
   - 7.4
   - 8.0
   - 8.1
