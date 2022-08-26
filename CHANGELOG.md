@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.8] 2022-08-26
+
+* Add a comma as a valid character #6
+
 ## [2.7.7] 2022-02-27
 
 * 4c214d0 - Added some more popular generic top-level domains
