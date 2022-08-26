@@ -264,7 +264,6 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"Lorem %s. Ipsum",
 			"Lorem %s",
 			"%s, Lorem",
-			"%s,Lorem",
 			"%s. Lorem",
 			"Lorem: %s",
 			"Lorem:%s",
@@ -430,4 +429,21 @@ e-shopu&lt;/a&gt;',$lfinder->process($src));
 			$lfinder->process($src)
 		);
 	}
+
+	function test_coma_in_url(){
+		$lfinder = new LinkFinder();
+		foreach(array(
+			'www.example.com,see' => '<a href="http://www.example.com">www.example.com</a>,see',
+			'https://www.example.com/,see' => '<a href="https://www.example.com/">https://www.example.com/</a>,see',
+			'www.example.com/?p=a,b' => '<a href="http://www.example.com/?p=a,b">www.example.com/?p=a,b</a>',
+			'www.example.com/?p=ab,' => '<a href="http://www.example.com/?p=ab">www.example.com/?p=ab</a>,',
+
+			// https://github.com/yarri/LinkFinder/pull/6
+			'https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/' => '<a href="https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/">https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/</a>'
+		) as $src => $expected){
+			$result = $lfinder->processHtml($src);
+			$this->assertEquals($expected,$result);
+		}
+	}
+
 }
