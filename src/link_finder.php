@@ -293,7 +293,7 @@ class LinkFinder{
 		$this->__replaces = array();
 
 		// Data for patterns
-		$uri_allowed_chars = "[-a-zA-Z0-9@:%_+.~#&\\/=;\[\]$!*]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()`,
+		$uri_allowed_chars = "[-a-zA-Z0-9@:%_+.~#&\\/=,;\[\]$!*]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()`,
 		$uri = "(\\/$uri_allowed_chars*|\\/|)(\\?$uri_allowed_chars*|)";
 		$not_empty_uri = "((\\/$uri_allowed_chars*|\\/)(\\?$uri_allowed_chars*|)|\\?$uri_allowed_chars*)";
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot, domain name part can be just 1 character long
