@@ -242,7 +242,11 @@ class LinkFinder{
 		global $_SERVER;
 		if(!isset($options["secured_websites"]) && isset($_SERVER) && isset($_SERVER["HTTP_HOST"]) && isset($_SERVER["HTTPS"])){
 			if($_SERVER["HTTPS"]==="on"){
-				$options["secured_websites"] = array((string)$_SERVER["HTTP_HOST"]);
+				$http_host = (string)$_SERVER["HTTP_HOST"];
+				$options["secured_websites"] = array();
+				$options["secured_websites"][] = $http_host;
+				$options["secured_websites"][] = "www.$http_host";
+				$options["secured_websites"][] = preg_replace('/^www\./','',$http_host);
 			}
 		}
 		$this->_setOptions($options);

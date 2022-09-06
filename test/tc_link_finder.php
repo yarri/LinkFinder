@@ -345,29 +345,38 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 	function testSecuredWebsite(){
 		global $_SERVER;
 
-		$src = 'atk14.net, example.com/nice-page/, TWEATER.COM/?ok=1';
+		$src = 'atk14.net, www.atk14.net, example.com/nice-page/, TWEATER.COM/?ok=1';
 
 		$_SERVER = array();
 		$lfinder = new LinkFinder();
-		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
 
 		$lfinder = new LinkFinder(array("secured_websites" => array("example.com", "tweater.com","somewhere.com")));
-		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="https://example.com/nice-page/">example.com/nice-page/</a>, <a href="https://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="https://example.com/nice-page/">example.com/nice-page/</a>, <a href="https://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
 
 		// Auto configuration
 		$_SERVER["HTTP_HOST"] = "atk14.net";
 		$lfinder = new LinkFinder();
-		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
+		$_SERVER["HTTP_HOST"] = "www.atk14.net";
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
 
 		$_SERVER["HTTP_HOST"] = "atk14.net";
 		$_SERVER["HTTPS"] = "on";
 		$lfinder = new LinkFinder();
-		$this->assertEquals('<a href="https://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+		$this->assertEquals('<a href="https://atk14.net">atk14.net</a>, <a href="https://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
+		$_SERVER["HTTP_HOST"] = "www.atk14.net";
+		$_SERVER["HTTPS"] = "on";
+		$lfinder = new LinkFinder();
+		$this->assertEquals('<a href="https://atk14.net">atk14.net</a>, <a href="https://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
 
 		$_SERVER["HTTP_HOST"] = "somewhere.org";
 		$_SERVER["HTTPS"] = "on";
 		$lfinder = new LinkFinder();
-		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
 	}
 
 	function testShorteningUrl(){
