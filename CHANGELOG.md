@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.9] 2022-09-06
+
+* 6b9013e - Option secured_websites is automatically confired for both versions of current HTTP host - with and without "www."
+
 ## [2.7.8] 2022-08-26
 
 * Add a comma as a valid character #6
