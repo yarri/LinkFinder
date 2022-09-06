@@ -31,7 +31,8 @@ class LinkFinder{
 
 		"shorten_long_urls" => true,
 
-		"secured_websites" => array(), // list of websites which are run on a secured web server - by default it is configured automatically in the constructor; e.g. ["www.example.com", "google.com"]
+		"prefer_https" => false,
+		"secured_websites" => array(), // list of websites which are run on a secured web server - by default, it is configured automatically in the constructor according to the actual HTTP host; e.g. ["www.example.com", "google.com"]
 
 		"link_template" => '<a %attrs%>%url%</a>',
 		"mailto_template" => '<a %attrs%>%address%</a>',
@@ -510,7 +511,7 @@ class LinkFinder{
 		$attrs["href"] = $key;
 		if(!preg_match('/^[a-z]+:\/\//i',$key)){
 			$_hostname = preg_replace('/\/.*$/','',$key);
-			$schema = in_array(strtolower($_hostname),$options["secured_websites"]) ? "https" : "http";
+			$schema = ($options["prefer_https"] || in_array(strtolower($_hostname),$options["secured_websites"])) ? "https" : "http";
 			$attrs["href"] = "$schema://$key"; // "www.example.com" -> "http://www.example.com"; "http://www.domain.com/" -> "http://www.domain.com/"
 		}
 

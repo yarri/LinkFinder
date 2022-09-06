@@ -377,7 +377,23 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$_SERVER["HTTPS"] = "on";
 		$lfinder = new LinkFinder();
 		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>',$lfinder->process($src));
+
 	}
+
+	function testPreferHttps(){
+		$src = 'atk14.net, www.atk14.net, example.com/nice-page/, TWEATER.COM/?ok=1, http://www.nice.com/, https://secured.website.com';
+
+		$_SERVER["HTTP_HOST"] = "somewhere.org";
+		unset($_SERVER["HTTPS"]);
+		$lfinder = new LinkFinder(array("prefer_https" => true));
+		$this->assertEquals('<a href="https://atk14.net">atk14.net</a>, <a href="https://www.atk14.net">www.atk14.net</a>, <a href="https://example.com/nice-page/">example.com/nice-page/</a>, <a href="https://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>, <a href="http://www.nice.com/">http://www.nice.com/</a>, <a href="https://secured.website.com">https://secured.website.com</a>',$lfinder->process($src));
+
+		$_SERVER["HTTP_HOST"] = "somewhere.org";
+		unset($_SERVER["HTTPS"]);
+		$lfinder = new LinkFinder(array("prefer_https" => false));
+		$this->assertEquals('<a href="http://atk14.net">atk14.net</a>, <a href="http://www.atk14.net">www.atk14.net</a>, <a href="http://example.com/nice-page/">example.com/nice-page/</a>, <a href="http://TWEATER.COM/?ok=1">TWEATER.COM/?ok=1</a>, <a href="http://www.nice.com/">http://www.nice.com/</a>, <a href="https://secured.website.com">https://secured.website.com</a>',$lfinder->process($src));
+	}
+	
 
 	function testShorteningUrl(){
 		$src = 'Long URL: https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/, short URL: https://cz.ign.com/se/?q=mario';
