@@ -3,6 +3,11 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.10] 2022-09-07
+
+* 838bea1 - Added option prefer_https
+* bec3d44 - Option prefer_https is true by default; also added LINK_FINDER_PREFER_HTTPS constant to change the default behaviour in the global scope
+
 ## [2.7.9] 2022-09-06
 
 * 6b9013e - Option secured_websites is automatically confired for both versions of current HTTP host - with and without "www."
