@@ -19,7 +19,7 @@ $text = '
 $lf = new LinkFinder();
 echo $lf->process($text);
 
-// Welcome at <a href="http://www.example.com/">www.example.com</a>!
+// Welcome at <a href="https://www.example.com/">www.example.com</a>!
 // Contact us on <a href="mailto:info@example.com">info@example.com</a>.
 ```
 
@@ -32,7 +32,7 @@ $lf = new LinkFinder([
 ]);
 echo $lf->process($text);
 
-// Welcome at <a class="external-link" href="http://www.example.com/" target="_blank" rel="nofollow">www.example.com</a>!
+// Welcome at <a class="external-link" href="https://www.example.com/" target="_blank" rel="nofollow">www.example.com</a>!
 // Contact us on <a class="external-email" href="mailto:info@example.com">info@example.com</a>.
 ```
 
@@ -64,7 +64,7 @@ $lf = new LinkFinder();
 echo $lf->processHtml($html_document);
 
 // <p>
-//   Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="http://Prague.eu">Prague.eu</a>.
+//   Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="https://Prague.eu">Prague.eu</a>.
 // </p>
 ```
 
@@ -81,10 +81,13 @@ $lf = new LinkFinder(["avoid_headlines" => false]);
 echo $lf->processHtml($html_document);
 ```
 
-List of secured websites can be specified in the options:
+If no protocol is specified in a future link (e.g. `www.example.com`), should LinkFinder prefer https over http? It can be set by the option `prefer_http`. The default value is true. There is also a constant `LINK_FINDER_PREFER_HTTPS` to change the default behaviour in the global scope.
+
+If `prefer_http` is set to false, a list of secured websites can be specified in the option `secured_websites`:
 
 ```php
 $lf = new LinkFinder([
+  "prefer_https" => false,
   "secured_websites" => [
     "example.com",
     "webmail.example.com"
