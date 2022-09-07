@@ -1,4 +1,6 @@
 <?php
+if(!defined("LINK_FINDER_PREFER_HTTPS")){ define("LINK_FINDER_PREFER_HTTPS",true); }
+
 /**
  * In a plain text document LinkFinder searches for URLs and email addresses and adds tags <a>..</a> around them
  *
@@ -31,8 +33,13 @@ class LinkFinder{
 
 		"shorten_long_urls" => true,
 
-		"prefer_https" => false,
-		"secured_websites" => array(), // list of websites which are run on a secured web server - by default, it is configured automatically in the constructor according to the actual HTTP host; e.g. ["www.example.com", "google.com"]
+		// If no protocol is specified in a future link (e.g. www.example.com),
+		// should LinkFinder prefer https over http? Default is true.
+		"prefer_https" => LINK_FINDER_PREFER_HTTPS,
+
+		// List of websites which are run on a secured web server - by default, it is configured automatically in the constructor according to the actual HTTP host; e.g. ["www.example.com", "example.com"].
+		// Has no effect if prefer_https is true.
+		"secured_websites" => array(),
 
 		"link_template" => '<a %attrs%>%url%</a>',
 		"mailto_template" => '<a %attrs%>%address%</a>',
