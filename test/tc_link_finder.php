@@ -238,8 +238,6 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"example.com:81/" => "http://example.com:81/",
 			"example.com:81/page.html" => "http://example.com:81/page.html",
 
-			"subdomain.example.com" => "http://subdomain.example.com",
-
 			"http://domain.com/var=[ID]" => "http://domain.com/var=[ID]",
 
 			// exclamation mark
