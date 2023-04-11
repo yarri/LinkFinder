@@ -130,7 +130,7 @@ Just use the Composer:
 Testing
 -------
 
-The LinkFinder is tested automatically using Travis CI in PHP 5.6 to PHP 8.1.
+The LinkFinder is tested automatically using Travis CI in PHP 5.6 to PHP 8.2.
 
 For the tests execution, the package [atk14/tester](https://packagist.org/packages/atk14/tester) is used. It is just a wrapping script for [phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit).
 
