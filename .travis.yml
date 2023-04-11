@@ -24,6 +24,12 @@ jobs:
       dist: focal
     - php: 8.1
       dist: focal
+    - php: 8.2
+      arch: x86_64
+      dist: jammy
+      before_install:
+      - sudo apt-get install libonig5
+      - composer update --dev
 
 before_install:
   - composer update --dev
