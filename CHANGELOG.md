@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.11] 2023-12-06
+
+* fb211d7 - Fix for PHP 8.2
+
 ## [2.7.10] 2022-09-07
 
 * 838bea1 - Added option prefer_https
