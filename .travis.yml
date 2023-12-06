@@ -24,12 +24,16 @@ jobs:
       dist: focal
     - php: 8.1
       dist: focal
-    - php: 8.2
-      arch: x86_64
+    - name: "PHP 8.2"
       dist: jammy
+      language: ruby # This makes no sence to me, but it works!
       before_install:
-      - sudo apt-get install libonig5
-      - composer update --dev
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.2 php8.2-mbstring
+        - php -v
+        - composer update --dev
 
 before_install:
   - composer update --dev
