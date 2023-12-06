@@ -246,6 +246,12 @@ class LinkFinder{
 		"zone",
 	);
 
+	// Private stuff
+	protected	$__attrs;
+	protected	$__mailto_attrs;
+	protected $__options;
+	protected $__replaces;
+
 	function __construct($options = array()){
 		global $_SERVER;
 		if(!isset($options["secured_websites"]) && isset($_SERVER) && isset($_SERVER["HTTP_HOST"]) && isset($_SERVER["HTTPS"])){
