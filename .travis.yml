@@ -34,6 +34,16 @@ jobs:
         - sudo apt install php8.2 php8.2-mbstring
         - php -v
         - composer update --dev
+    - name: "PHP 8.3"
+      dist: jammy
+      language: ruby # This makes no sence to me, but it works!
+      before_install:
+        - sudo apt install software-properties-common
+        - sudo add-apt-repository ppa:ondrej/php
+        - sudo apt update
+        - sudo apt install php8.3 php8.3-mbstring
+        - php -v
+        - composer update --dev
 
 before_install:
   - composer update --dev
