@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.7.12] 2024-10-12
+
+* 20cca0b - Question mark can be used in the parameters part
+
 ## [2.7.11] 2023-12-06
 
 * fb211d7 - Fix for PHP 8.2
