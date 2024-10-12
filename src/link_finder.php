@@ -311,9 +311,10 @@ class LinkFinder{
 		$this->__replaces = array();
 
 		// Data for patterns
-		$uri_allowed_chars = "[-a-zA-Z0-9@:%_+.~#&\\/=,;\[\]$!*]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()`,
-		$uri = "(?<uri>(\\/$uri_allowed_chars*|\\/|)(\\?$uri_allowed_chars*|))";
-		$not_empty_uri = "(?<uri>((\\/$uri_allowed_chars*|\\/)(\\?$uri_allowed_chars*|)|\\?$uri_allowed_chars*))";
+		$uri_allowed_chars_q = "[-a-zA-Z0-9@:%_+.~#&\\/=,;\[\]$!*?]"; // According to https://stackoverflow.com/questions/1547899/which-characters-make-a-url-invalid/1547940#1547940 there are yet more characters: '()`,
+		$uri_allowed_chars = str_replace("?","",$uri_allowed_chars_q); // without question mark
+		$uri = "(?<uri>(\\/$uri_allowed_chars*|\\/|)(\\?$uri_allowed_chars_q*|))";
+		$not_empty_uri = "(?<uri>((\\/$uri_allowed_chars*|\\/)(\\?$uri_allowed_chars_q*|)|\\?$uri_allowed_chars_q*))";
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot, domain name part can be just 1 character long
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
 		$top_level_domains = "(".join("|",$this->top_level_domains).")";
@@ -509,7 +510,7 @@ class LinkFinder{
 			// If the URI starts with comma, we prefer not to consider it as a URI.
 			$key = substr($key,0,strlen($key)-strlen($matches["uri"])+1);
 			$tail = substr($matches["uri"],1);
-		}elseif(!$leading_parenthesis && preg_match("/^(.+?)([.,;!]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
+		}elseif(!$leading_parenthesis && preg_match("/^(.+?)([.,;!?]+)$/",$key,$_matches)){ // dot(s) at the of a link - it probably means end of the sentence
 			$key = $_matches[1];
 			$tail = $_matches[2];
 		}

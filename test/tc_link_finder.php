@@ -258,6 +258,9 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			// no slash before question mark
 			"https://example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01" => "https://example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01",
 			"example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01" => "http://example.com?utm_source=Newsletter+Pro&utm_campaign=046f656a38-EMAIL_CAMPAIGN_2018_01_03_COPY_01",
+
+			// question mark in the parameters part
+			"https://forum.chronomag.cz/index.php?app=core&module=system&controller=redirect&url=https://forum.chronomag.cz/index.php?app=core%26module=system%26controller=register" => "https://forum.chronomag.cz/index.php?app=core&module=system&controller=redirect&url=https://forum.chronomag.cz/index.php?app=core%26module=system%26controller=register",
 		);
 
 		$templates = array(
@@ -453,16 +456,28 @@ e-shopu&lt;/a&gt;',$lfinder->process($src));
 		);
 	}
 
-	function test_coma_in_url(){
+	function test_issues(){
 		$lfinder = new LinkFinder();
 		foreach(array(
+			// coma in url
 			'www.example.com,see' => '<a href="https://www.example.com">www.example.com</a>,see',
 			'https://www.example.com/,see' => '<a href="https://www.example.com/">https://www.example.com/</a>,see',
 			'www.example.com/?p=a,b' => '<a href="https://www.example.com/?p=a,b">www.example.com/?p=a,b</a>',
 			'www.example.com/?p=ab,' => '<a href="https://www.example.com/?p=ab">www.example.com/?p=ab</a>,',
 
 			// https://github.com/yarri/LinkFinder/pull/6
-			'https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/' => '<a href="https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/">https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/</a>'
+			'https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/' => '<a href="https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/">https://www.trulia.com/for_sale/Las_Vegas,NV/2p_beds/</a>',
+
+			// question mark
+			'www.example.com?' => '<a href="https://www.example.com">www.example.com</a>?',
+			'www.example.com/?' => '<a href="https://www.example.com/">www.example.com/</a>?',
+			'www.example.com/???' => '<a href="https://www.example.com/">www.example.com/</a>???',
+			'www.example.com/?a=b' => '<a href="https://www.example.com/?a=b">www.example.com/?a=b</a>',
+			'www.example.com/?a=b?' => '<a href="https://www.example.com/?a=b">www.example.com/?a=b</a>?',
+			'www.example.com?a=b' => '<a href="https://www.example.com?a=b">www.example.com?a=b</a>',
+			'www.example.com/?a=b&c=d?e' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>',
+			'www.example.com/?a=b&c=d?e?' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>?',
+			'www.example.com/?a=b&c=d?e???' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>???',
 		) as $src => $expected){
 			$result = $lfinder->processHtml($src);
 			$this->assertEquals($expected,$result);
