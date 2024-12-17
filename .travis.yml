@@ -24,7 +24,7 @@ jobs:
       dist: focal
     - php: 8.1
       dist: focal
-    - name: "PHP 8.2"
+    - name: "PHP: 8.2"
       dist: jammy
       language: ruby # This makes no sence to me, but it works!
       before_install:
@@ -34,7 +34,7 @@ jobs:
         - sudo apt install php8.2 php8.2-mbstring
         - php -v
         - composer update --dev
-    - name: "PHP 8.3"
+    - name: "PHP: 8.3"
       dist: jammy
       language: ruby # This makes no sence to me, but it works!
       before_install:
