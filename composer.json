@@ -15,7 +15,7 @@
                 "php": ">=5.6.0"
         },
         "require-dev": {
-                "atk14/tester": "0.3.*"
+                "atk14/tester": "0.5.*"
         },
         "autoload": {
                 "classmap": ["src"]
