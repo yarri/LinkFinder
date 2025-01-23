@@ -1,6 +1,9 @@
 <?php
 class TcBase extends TcSuperBase {
 
+	// The following solves this issue:
+	// https://github.com/sebastianbergmann/phpunit/issues/3026
+
 	private $requestTimeFloat;
 
 	public function _setUp(){
