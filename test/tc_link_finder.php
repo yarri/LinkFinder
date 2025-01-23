@@ -1,11 +1,6 @@
 <?php
 class TcLinkFinder extends TcBase{
 
-	function __construct(){
-	 $this->backupGlobals = [true];
-	 parent::__construct();
-	}
-
 	function testBasicUsage(){
 		$lfinder = new LinkFinder();
 
