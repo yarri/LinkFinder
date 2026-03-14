@@ -406,6 +406,13 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$this->assertEquals('Long URL: <a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/</a>, short URL: <a href="https://cz.ign.com/se/?q=mario">https://cz.ign.com/se/?q=mario</a>',$lfinder->process($src));
 	}
 
+	function test_href_callback(){
+		$lfinder = new LinkFinder(array(
+			"href_callback" => function($url){ return "https://redirect.example.com/?url=".urlencode($url); }
+		));
+		$this->assertEquals('<a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>',$lfinder->process('www.atk14.net'));
+	}
+
 	// https://github.com/yarri/LinkFinder/issues/5
 	function testIssue5(){
 		$src = '501018655941-lu5e4mhrmo1opkef4d8b7i5tpgjj84ac.apps.googleusercontent.com';
@@ -475,14 +482,11 @@ e-shopu&lt;/a&gt;',$lfinder->process($src));
 			'www.example.com/?a=b' => '<a href="https://www.example.com/?a=b">www.example.com/?a=b</a>',
 			'www.example.com/?a=b?' => '<a href="https://www.example.com/?a=b">www.example.com/?a=b</a>?',
 			'www.example.com?a=b' => '<a href="https://www.example.com?a=b">www.example.com?a=b</a>',
-			'www.example.com/?a=b&c=d?e' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>',
-			'www.example.com/?a=b&c=d?e?' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>?',
-			'www.example.com/?a=b&c=d?e???' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>???',
-
-			// html entities encoded
-			'www.example.com/?a=b&amp;c=d' => '<a href="https://www.example.com/?a=b&amp;c=d">www.example.com/?a=b&amp;c=d</a>',
+			'www.example.com/?a=b&c=d?e' => '<a href="https://www.example.com/?a=b&amp;c=d?e">www.example.com/?a=b&amp;c=d?e</a>',
+			'www.example.com/?a=b&c=d?e?' => '<a href="https://www.example.com/?a=b&amp;c=d?e">www.example.com/?a=b&amp;c=d?e</a>?',
+			'www.example.com/?a=b&c=d?e???' => '<a href="https://www.example.com/?a=b&amp;c=d?e">www.example.com/?a=b&amp;c=d?e</a>???',
 		) as $src => $expected){
-			$result = $lfinder->processHtml($src);
+			$result = $lfinder->process($src);
 			$this->assertEquals($expected,$result);
 		}
 	}

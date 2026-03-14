@@ -50,6 +50,8 @@ class LinkFinder{
 		"open_links_in_new_windows" => null, // true, false
 		"link_class" => "",
 		"mailto_class" => "",
+
+		"href_callback" => null, // e.g. function($url){ return "https://redirect.example.com/?url=" . urlencode($url); }
 	);
 
 	protected $top_level_domains = array(
@@ -428,10 +430,18 @@ class LinkFinder{
 
 	protected function _renderTemplate($template,$attrs,$replaces){
 		ksort($attrs);
+		$options = $this->_getOptions();
+		$href_callback = $options["href_callback"];
 
 		$_attrs = array();
 		foreach($attrs as $key => $value){
-			$_attrs[] = sprintf('%s="%s"',$key,$value);
+			if($key=="href"){
+				$value = htmlspecialchars_decode($value);
+				if($href_callback){
+					$value = $href_callback($value);
+				}
+			}
+			$_attrs[] = sprintf('%s="%s"',$key,htmlspecialchars($value,ENT_QUOTES));
 		}
 		$attrs_str = join(" ",$_attrs);
 

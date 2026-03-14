@@ -120,6 +120,18 @@ If the shortening is not desired behaviour, option shorten_long_urls should be s
 $lf = new LinkFinder(["shorten_long_urls" => false]);
 ```
 
+#### href_callback
+
+You can use the href_callback option to customize the format of the href value.
+
+```php
+$lf = new LinkFinder([
+  "href_callback" => function($url){ return "https://redirect.example.com/?url=".urlencode($url); }
+]);
+
+echo $lf->process('www.atk14.net'); // <a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
+```
+
 Installation
 ------------
 
