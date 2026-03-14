@@ -19,10 +19,10 @@ class TcLinkFinder extends TcBase{
 		);
 
 		// auto escaping of HTML entities
-		$src = 'Lorem www.ipsum.com <http://www.ipsum.com/>.
+		$src = 'Lorem www.ipsum.com <http://www.ipsum.com/?p1=a&p2=b>.
 			Dolor: dolor@sit.new <dolor@sit.net>. Thank you';
 		$this->assertEquals(
-			'Lorem <a href="https://www.ipsum.com">www.ipsum.com</a> &lt;<a href="http://www.ipsum.com/">http://www.ipsum.com/</a>&gt;.
+			'Lorem <a href="https://www.ipsum.com">www.ipsum.com</a> &lt;<a href="http://www.ipsum.com/?p1=a&amp;p2=b">http://www.ipsum.com/?p1=a&amp;p2=b</a>&gt;.
 			Dolor: <a href="mailto:dolor@sit.new">dolor@sit.new</a> &lt;<a href="mailto:dolor@sit.net">dolor@sit.net</a>&gt;. Thank you',
 			$lfinder->process($src)
 		);
@@ -478,6 +478,9 @@ e-shopu&lt;/a&gt;',$lfinder->process($src));
 			'www.example.com/?a=b&c=d?e' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>',
 			'www.example.com/?a=b&c=d?e?' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>?',
 			'www.example.com/?a=b&c=d?e???' => '<a href="https://www.example.com/?a=b&c=d?e">www.example.com/?a=b&c=d?e</a>???',
+
+			// html entities encoded
+			'www.example.com/?a=b&amp;c=d' => '<a href="https://www.example.com/?a=b&amp;c=d">www.example.com/?a=b&amp;c=d</a>',
 		) as $src => $expected){
 			$result = $lfinder->processHtml($src);
 			$this->assertEquals($expected,$result);
