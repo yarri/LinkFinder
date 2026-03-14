@@ -54,199 +54,7 @@ class LinkFinder{
 		"href_callback" => null, // e.g. function($url){ return "https://redirect.example.com/?url=" . urlencode($url); }
 	);
 
-	protected $top_level_domains = array(
-		// Taken from: https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
-
-		// Original top-level domains
-		"com",
-		"org",
-		"net",
-		"int",
-		"edu",
-		"gov",
-		"mil",
-
-		// Country code top-level domains
-		"ac", "ad", "ae", "af", "ag", "ai", "al", "am", "an", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az",
-		"ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bv", "bw", "by", "bz",
-		"ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz",
-		"de", "dj", "dk", "dm", "do", "dz",
-		"ec", "ee", "eg", "eh", "er", "es", "et", "eu",
-		"fi", "fj", "fk", "fm", "fo", "fr",
-		"ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy",
-		"hk", "hm", "hn", "hr", "ht", "hu", "id",
-		"ie", "il", "im", "in", "io", "iq", "ir", "is", "it",
-		"je", "jm", "jo", "jp",
-		"ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz",
-		"la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly",
-		"ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz",
-		"na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz",
-		"om",
-		"pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py",
-		"qa",
-		"re", "ro", "rs", "ru", "rw",
-		"sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "su", "sv", "sx", "sy", "sz",
-		"tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tp", "tr", "tt", "tv", "tw", "tz",
-		"ua", "ug", "uk", "um", "us", "uy", "uz",
-		"va", "vc", "ve", "vg", "vi", "vn", "vu",
-		"wf", "ws",
-		"ye", "yt",
-		"za", "zm", "zw",
-
-		// Popular ICANN-era generic top-level domains
-		// https://domainnamestat.com/statistics/tldtype/new
-		// TODO: Add more
-		"academy",
-		"accountant",
-		"adult",
-		"aero",
-		"africa",
-		"agency",
-		"app",
-		"army",
-		"art",
-		"asia",
-		"bar",
-		"bargains",
-		"bayern",
-		"berlin",
-		"best",
-		"bet",
-		"bid",
-		"biz",
-		"blackfriday",
-		"blog",
-		"business",
-		"buzz",
-		"cam",
-		"care",
-		"casa",
-		"cat",
-		"center",
-		"church",
-		"city",
-		"click",
-		"cloud",
-		"club",
-		"codes",
-		"company",
-		"consulting",
-		"cool",
-		"cyou",
-		"date",
-		"design",
-		"dev",
-		"digital",
-		"download",
-		"earth",
-		"education",
-		"email",
-		"estate",
-		"events",
-		"expert",
-		"faith",
-		"family",
-		"finance",
-		"fit",
-		"fun",
-		"fyi",
-		"games",
-		"gdn",
-		"global",
-		"group",
-		"guru",
-		"host",
-		"hosting",
-		"icu",
-		"info",
-		"ink",
-		"international",
-		"jobs",
-		"kitchen",
-		"kiwi",
-		"life",
-		"link",
-		"live",
-		"loan",
-		"lol",
-		"london",
-		"love",
-		"ltd",
-		"market",
-		"marketing",
-		"media",
-		"men",
-		"mobi",
-		"monster",
-		"name",
-		"network",
-		"news",
-		"ninja",
-		"nyc",
-		"one",
-		"online",
-		"ooo",
-		"ovh",
-		"page",
-		"party",
-		"photography",
-		"plus",
-		"politie",
-		"press",
-		"pro",
-		"pub",
-		"quest",
-		"racing",
-		"realtor",
-		"realty",
-		"red",
-		"ren",
-		"rest",
-		"review",
-		"rocks",
-		"run",
-		"sale",
-		"science",
-		"services",
-		"shop",
-		"site",
-		"social",
-		"solutions",
-		"space",
-		"store",
-		"stream",
-		"studio",
-		"support",
-		"systems",
-		"team",
-		"tech",
-		"technology",
-		"tel",
-		"tips",
-		"today",
-		"tokyo",
-		"top",
-		"trade",
-		"travel",
-		"uno",
-		"video",
-		"vip",
-		"wang",
-		"watches",
-		"webcam",
-		"website",
-		"wedding",
-		"wiki",
-		"win",
-		"work",
-		"works",
-		"world",
-		"wtf",
-		"xin",
-		"xxx",
-		"xyz",
-		"zone",
-	);
+	protected static $top_level_domains;
 
 	// Private stuff
 	protected	$__attrs;
@@ -266,6 +74,16 @@ class LinkFinder{
 			}
 		}
 		$this->_setOptions($options);
+
+		if(!self::$top_level_domains){
+			$content = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.txt");
+			foreach(explode("\n",$content) as $line){
+				$line = trim($line);
+				if(!$line || preg_match('/^(#|XN--)/',$line)){ continue; }
+				$tld = strtolower($line);
+				self::$top_level_domains[] = $tld;
+			}
+		}
 	}
 
 	function setToOpenLinkInNewWindow($set = true){ $this->_setOption("open_links_in_new_windows",(bool)$set); }
@@ -319,7 +137,7 @@ class LinkFinder{
 		$not_empty_uri = "(?<uri>((\\/$uri_allowed_chars*|\\/)(\\?$uri_allowed_chars_q*|)|\\?$uri_allowed_chars_q*))";
 		$domain_name_part = "[a-zA-Z0-9][-a-zA-Z0-9]*"; // without dot, domain name part can be just 1 character long
 		$optional_port = "(:[1-9][0-9]{1,4}|)"; // ":81", ":65535", ""
-		$top_level_domains = "(".join("|",$this->top_level_domains).")";
+		$tld = "(?<tld>[a-zA-Z]{2,20})";
 		$username_chars = "[-a-zA-Z0-9%]+";
 		$password_chars = $username_chars;
 
@@ -337,13 +155,13 @@ class LinkFinder{
 		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 
 		// urls without leading www., http://, ... and with something in URI part which may look like an email address (e.g. mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm)
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains\\b$optional_port$not_empty_uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$tld\\b$optional_port$not_empty_uri)","_replaceLink",$text,$options);
 
 		// emails
-		$text = $this->_pregReplaceCallback("(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+[a-z]{2,5})(?<ending_interrupter>.?)","_replaceEmail",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+$tld)(?<ending_interrupter>.?)","_replaceEmail",$text,$options);
 
 		// urls without leading www., http://, ...
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$top_level_domains\\b$optional_port$uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$tld\\b$optional_port$uri)","_replaceLink",$text,$options);
 
 		$text = strtr($text,$this->__replaces);
 
@@ -509,6 +327,10 @@ class LinkFinder{
 
 		$leading_parenthesis = $matches["leading_parenthesis"];
 		$ending_parenthesis = $matches["ending_parenthesis"];
+
+		if(isset($matches["tld"]) && !in_array(strtolower($matches["tld"]),self::$top_level_domains)){
+			return $matches[0];
+		}
 
 		if(in_array($first_char,array('/','.'))){
 			return $matches[0];

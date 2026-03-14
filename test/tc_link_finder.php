@@ -326,7 +326,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 	function testNotLinks(){
 		$not_links = array(
-			"i like indian food.how about you.",
+			"i like indian food.what about you.",
 			"tlds are .com, .net, .org, etc.",
 			"pattern is *.com",
 			"pattern is -.com",
@@ -337,7 +337,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			'.example.com',
 			'.www.example.com',
 			'Dostali jsme žádost o reset vašeho Facebook hesla.Zadejte tento kód pro reset', // hesla.Za
-			'Bolí vás r-a.mena a krk' // r-a.me
+			'Bolí vás r-a.mena a krk', // r-a.me
 		);
 
 		$lfinder = new LinkFinder();
