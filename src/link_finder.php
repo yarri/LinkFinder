@@ -92,6 +92,8 @@ class LinkFinder{
 	function setMailtoClass($class){ $this->_setOption("mailto_class",(string)$class); }
 	function setLinkTemplate($template){ $this->_setOption("link_template",(string)$template); }
 	function setMailtoTemplate($template){ $this->_setOption("mailto_template",(string)$template); }
+	function setHrefCallback($calback){ $this->_setOption("href_callback",$calback); }
+	function setMailtoCallback($calback){ $this->_setOption("mailto_callback",$calback); }
 
 	/**
 	 * In the given text it searches for URLs and emails and adds <a> tags around them.

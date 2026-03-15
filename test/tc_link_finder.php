@@ -411,11 +411,18 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			www.atk14.net
 			info@example.com
 		';
+
 		$lfinder = new LinkFinder(array(
 			"href_callback" => function($url){ return "https://redirect.example.com/?url=".urlencode($url); }
 		));
 		$this->assertEquals('
 			<a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
+			<a href="mailto:info@example.com">info@example.com</a>
+		',$lfinder->process($src));
+
+		$lfinder->setHrefCallback(function($url){ return "/redirect.php?u=".urlencode($url);});
+		$this->assertEquals('
+			<a href="/redirect.php?u=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
 			<a href="mailto:info@example.com">info@example.com</a>
 		',$lfinder->process($src));
 	}
@@ -425,12 +432,19 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			www.atk14.net
 			info@example.com
 		';
+
 		$lfinder = new LinkFinder(array(
 			"mailto_callback" => function($email){ return "/compose_message.php?to=".urlencode($email); }
 		));
 		$this->assertEquals('
 			<a href="https://www.atk14.net">www.atk14.net</a>
 			<a href="/compose_message.php?to=info%40example.com">info@example.com</a>
+		',$lfinder->process($src));
+
+		$lfinder->setMailtoCallback(function($email){ return "/en/messages/create_new/?to=".urlencode($email); });
+		$this->assertEquals('
+			<a href="https://www.atk14.net">www.atk14.net</a>
+			<a href="/en/messages/create_new/?to=info%40example.com">info@example.com</a>
 		',$lfinder->process($src));
 	}
 
