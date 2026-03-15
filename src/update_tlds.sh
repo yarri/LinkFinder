@@ -9,7 +9,7 @@ wget https://data.iana.org/TLD/tlds-alpha-by-domain.txt -O tlds.txt || exit 1
 # Converting tlds.txt into tlds.php
 echo '<?php' > tlds.php
 echo 'return array(' >> tlds.php
-cat tlds.txt | 
+< tlds.txt \
 	grep -v '#' | # comment
 	grep -v 'XN--' | # IDN domain names are not currentry supported
 	tr [A-Z] [a-z] | # lowercase
