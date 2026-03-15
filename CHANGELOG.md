@@ -3,6 +3,14 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.8] 2026-03-15
+
+* e4f451e - Added href_callback option
+* 12f4d43 - Added the mailto_callback option to customize the format of the href value when it contains an email address
+* b4cde64 - Added methods LinkFinder::setHrefCallback($callback) and LinkFinder::setMailtoCallback($callback)
+* cbb1e50 - Top-level domains are downloaded from https://data.iana.org/TLD/tlds-alpha-by-domain.txt
+* 9305a86 - [GitHub Actions] Testing project using GitHub Actions
+
 ## [2.7.12] 2024-10-12
 
 * 20cca0b - Question mark can be used in the parameters part
