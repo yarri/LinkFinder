@@ -136,7 +136,7 @@ Default value of the href_callback is `function($url){ return $url; }`
 
 #### mailto_callback
 
-You can also specify the mailto_callback option to adjust the format of the hre` value when it contains an email address.
+You can also specify the mailto_callback option to customize the format of the href value when it contains an email address.
 
 ```php
 $lf = new LinkFinder([
