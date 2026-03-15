@@ -132,6 +132,22 @@ $lf = new LinkFinder([
 echo $lf->process('www.atk14.net'); // <a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
 ```
 
+Default value of the href_callback is `function($url){ return $url; }`
+
+#### mailto_callback
+
+You can also specify the mailto_callback option to adjust the format of the hre` value when it contains an email address.
+
+```php
+$lf = new LinkFinder([
+  "mailto_callback" => function($email){ return "/compose_message.php?to=".urlencode($email); }
+]);
+
+echo $lf->process('info@example.com'); // <a href="/compose_message.php?to=info%40example.com">info@example.com</a>
+```
+
+Default value of the mailto_callback is `function($email){ return "mailto:$email"; }`
+
 Installation
 ------------
 

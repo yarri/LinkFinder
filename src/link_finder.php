@@ -51,10 +51,11 @@ class LinkFinder{
 		"link_class" => "",
 		"mailto_class" => "",
 
-		"href_callback" => null, // e.g. function($url){ return "https://redirect.example.com/?url=" . urlencode($url); }
+		"href_callback" => null, // e.g. function($url){ return "https://redirect.example.com/?url=".urlencode($url); }
+		"mailto_callback" => null, // e.g. function($email){ return "/compose_email.php?for=".urlencode($email); }
 	);
 
-	protected static $top_level_domains;
+	protected static $top_level_domains; // will read from tlds.php
 
 	// Private stuff
 	protected	$__attrs;
@@ -73,6 +74,10 @@ class LinkFinder{
 				$options["secured_websites"][] = preg_replace('/^www\./','',$http_host);
 			}
 		}
+
+		$this->default_options["href_callback"] = function($url){ return $url; };
+		$this->default_options["mailto_callback"] = function($email){ return "mailto:$email"; };
+
 		$this->_setOptions($options);
 
 		if(!self::$top_level_domains){
@@ -240,10 +245,8 @@ class LinkFinder{
 		return $tr_table;
 	}
 
-	protected function _renderTemplate($template,$attrs,$replaces){
+	protected function _renderTemplate($template,$attrs,$replaces,$href_callback){
 		ksort($attrs);
-		$options = $this->_getOptions();
-		$href_callback = $options["href_callback"];
 
 		$_attrs = array();
 		foreach($attrs as $key => $value){
@@ -267,9 +270,6 @@ class LinkFinder{
 		//
 		// TODO: to be removed
 		$replaces["%href%"] = $attrs["href"];
-		if(preg_match('/^mailto:(.*)/',$attrs["href"],$matches)){
-			$replaces["%mailto%"] = $matches[1];
-		}
 		$replaces["%target%"] = "";
 		if(isset($attrs["target"]) && strlen($attrs["target"])){
 			$replaces["%target%"] = " target=\"$attrs[target]\"";
@@ -359,7 +359,7 @@ class LinkFinder{
 
 		$this->__replaces[$replace_key] = $this->_renderTemplate($options["link_template"],$attrs,array(
 			"%url%" => $options["shorten_long_urls"] ? $this->_shortenUrl($key) : $key
-		));
+		),$options["href_callback"]);
 
 		return $leading_parenthesis.$first_char.$replace_key.$tail.$ending_parenthesis;
 	}
@@ -381,9 +381,12 @@ class LinkFinder{
 			return $replace_key;
 		}
 
-		$mailto_attrs["href"] = "mailto:$address";
+		$mailto_attrs["href"] = "$address";
 
-		$this->__replaces[$replace_key] = $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array("%address%" => $address));
+		$this->__replaces[$replace_key] = $this->_renderTemplate($options["mailto_template"],$mailto_attrs,array(
+			"%address%" => $address,
+			"%mailto%" => $address, // legacy 
+		),$options["mailto_callback"]);
 
 		return $leading_parenthesis.$replace_key.$ending_interrupter.$ending_parenthesis;
 	}

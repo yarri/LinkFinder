@@ -407,10 +407,31 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 	}
 
 	function test_href_callback(){
+		$src = '
+			www.atk14.net
+			info@example.com
+		';
 		$lfinder = new LinkFinder(array(
 			"href_callback" => function($url){ return "https://redirect.example.com/?url=".urlencode($url); }
 		));
-		$this->assertEquals('<a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>',$lfinder->process('www.atk14.net'));
+		$this->assertEquals('
+			<a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
+			<a href="mailto:info@example.com">info@example.com</a>
+		',$lfinder->process($src));
+	}
+
+	function test_mailto_callback(){
+		$src = '
+			www.atk14.net
+			info@example.com
+		';
+		$lfinder = new LinkFinder(array(
+			"mailto_callback" => function($email){ return "/compose_message.php?to=".urlencode($email); }
+		));
+		$this->assertEquals('
+			<a href="https://www.atk14.net">www.atk14.net</a>
+			<a href="/compose_message.php?to=info%40example.com">info@example.com</a>
+		',$lfinder->process($src));
 	}
 
 	// https://github.com/yarri/LinkFinder/issues/5
