@@ -258,7 +258,12 @@ class LinkFinder{
 					$value = $href_callback($value);
 				}
 			}
-			$_attrs[] = sprintf('%s="%s"',$key,htmlspecialchars($value,ENT_QUOTES));
+
+			// A valid HTML attribute name may contain only letters, numbers, hyphens, and underscores
+			$safe_key = preg_replace('/[^a-zA-Z0-9_-]/', '', $key);
+			if ($safe_key === "") { continue; }
+
+			$_attrs[] = sprintf('%s="%s"',$safe_key,htmlspecialchars($value,ENT_QUOTES));
 		}
 		$attrs_str = join(" ",$_attrs);
 
