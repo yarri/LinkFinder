@@ -350,6 +350,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 	function testNotEmails(){
 		$not_links = array(
+			"kiss@net",
 			"root@localhost",
 			"root@localhost.localdomain",
 			"1.2@3.4.5",
