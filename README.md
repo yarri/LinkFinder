@@ -132,9 +132,9 @@ $lf = new LinkFinder([
 echo $lf->process('www.atk14.net'); // <a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
 ```
 
-Default value of the href_callback is `function($url){ return $url; }`.
+Default value of the href_callback is `function($url){ return $url; }`
 
-The href_callback can be also set using method `$lf->setHrefCallback($callback)`.
+The href_callback can be also set using method `$lf->setHrefCallback($callback)`
 
 #### mailto_callback
 
@@ -148,9 +148,9 @@ $lf = new LinkFinder([
 echo $lf->process('info@example.com'); // <a href="/compose_message.php?to=info%40example.com">info@example.com</a>
 ```
 
-Default value of the mailto_callback is `function($email){ return "mailto:$email"; }`.
+Default value of the mailto_callback is `function($email){ return "mailto:$email"; }`
 
-The mailto_callback can be also set using method `$lf->setMailCallback($callback)`.
+The mailto_callback can be also set using method `$lf->setMailtoCallback($callback)`
 
 Installation
 ------------
