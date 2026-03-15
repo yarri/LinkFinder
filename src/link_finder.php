@@ -76,13 +76,7 @@ class LinkFinder{
 		$this->_setOptions($options);
 
 		if(!self::$top_level_domains){
-			$content = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.txt");
-			foreach(explode("\n",$content) as $line){
-				$line = trim($line);
-				if(!$line || preg_match('/^(#|XN--)/',$line)){ continue; }
-				$tld = strtolower($line);
-				self::$top_level_domains[] = $tld;
-			}
+			self::$top_level_domains = require(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.php");
 		}
 	}
 
