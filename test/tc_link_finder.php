@@ -348,6 +348,26 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		}
 	}
 
+	function testNotEmails(){
+		$not_links = array(
+			"root@localhost",
+			"root@localhost.localdomain",
+			"1.2@3.4.5",
+			"v2@1.0.release",
+			"kernel@4.15.0-generic",
+			"@angular/core",
+			"HEAD@{2}",
+			"refs@origin.git",
+		);
+
+		$lfinder = new LinkFinder();
+
+		foreach($not_links as $str){
+			$out = $lfinder->process($str);
+			$this->assertEquals($str,$out,"\"$out\" should not contain a link");
+		}
+	}
+
 	function testPreferHttps(){
 		$src = 'atk14.net, www.atk14.net, example.com/nice-page/, TWEATER.COM/?ok=1, http://www.nice.com/, https://secured.website.com';
 

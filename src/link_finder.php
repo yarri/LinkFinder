@@ -381,6 +381,10 @@ class LinkFinder{
 		$leading_parenthesis = $matches["leading_parenthesis"];
 		$ending_parenthesis = $matches["ending_parenthesis"];
 
+		if(isset($matches["tld"]) && !in_array(strtolower($matches["tld"]),self::$top_level_domains)){
+			return $matches[0];
+		}
+
 		$replace_key = $this->_getNewReplaceKey();
 
 		if(in_array($ending_interrupter,array(":"))){
