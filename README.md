@@ -1,7 +1,7 @@
 LinkFinder
 ==========
 
-[![Build Status](https://app.travis-ci.com/yarri/LinkFinder.svg?branch=master)](https://app.travis-ci.com/yarri/LinkFinder)
+[![Tests](https://github.com/yarri/LinkFinder/actions/workflows/tests.yml/badge.svg)](https://github.com/yarri/LinkFinder/actions/workflows/tests.yml)
 [![Downloads](https://img.shields.io/packagist/dt/yarri/link-finder.svg)](https://packagist.org/packages/yarri/link-finder)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/63b456d41b7c4232b3f96fe4b5da8be7)](https://app.codacy.com/gh/yarri/LinkFinder/dashboard)
 
