@@ -64,6 +64,9 @@ class LinkFinder{
 	protected $__options;
 	protected $__replaces;
 
+	protected $__rnd;
+	protected $__counter = 0;
+
 	function __construct($options = array()){
 		global $_SERVER;
 		if(!isset($options["secured_websites"]) && isset($_SERVER) && isset($_SERVER["HTTP_HOST"]) && isset($_SERVER["HTTPS"])){
@@ -402,12 +405,10 @@ class LinkFinder{
 	}
 
 	protected function _getNewReplaceKey(){
-		static $rnd, $counter = 0;
+		if(!$this->__rnd){ $this->__rnd = uniqid(); }
 
-		if(!$rnd){ $rnd = uniqid(); }
-
-		$counter++;
-		return " Xreplace.{$rnd}.{$counter}X ";
+		$this->__counter++;
+		return " Xreplace.{$this->__rnd}.{$this->__counter}X ";
 	}
 
 	protected function _shortenUrl($url){
