@@ -32,6 +32,7 @@ class LinkFinder{
 		"avoid_headlines" => true, // when processing HTML text, whether to find and replace links in headlines (<h1>, <h2>, ...) or not?
 
 		"shorten_long_urls" => true,
+		"shortened_url_max_length" => 65, // in emails, lines should not be larger than 70 characters
 
 		// If no protocol is specified in a future link (e.g. www.example.com),
 		// should LinkFinder prefer https over http? Default is true.
@@ -275,7 +276,6 @@ class LinkFinder{
 		//	<a href="%href%"%class%%target%>%url%</a>
 		//	<a href="mailto:%mailto%"%class%>%address%</a>
 		//
-		// TODO: to be removed
 		$replaces["%href%"] = $attrs["href"];
 		$replaces["%target%"] = "";
 		if(isset($attrs["target"]) && strlen($attrs["target"])){
@@ -305,7 +305,6 @@ class LinkFinder{
 
 		// Dealing with legacy options
 		//
-		// TODO: to be removed
 		if(strlen($options["link_class"])){
 			$options["attrs"]["class"] = $options["link_class"];
 		}
@@ -412,7 +411,8 @@ class LinkFinder{
 	}
 
 	protected function _shortenUrl($url){
-		$max_length = 65; // In emails, lines should not be larger than 70 characters.
+		$options = $this->_getOptions();
+		$max_length = $options["shortened_url_max_length"];
 		if(strlen($url)<=$max_length){
 			return $url;
 		}
