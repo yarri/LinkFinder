@@ -102,7 +102,7 @@ If the secured_websites option is omitted and https protocol is active, the curr
 
 #### Long URLs shortening
 
-Long URLs are automatically shortened to a maximum of 70 characters. For example, the following URL:
+Long URLs are automatically shortened to a maximum of 65 characters. For example, the following URL:
 
 ```
 https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/
@@ -118,6 +118,12 @@ If the shortening is not desired behaviour, option shorten_long_urls should be s
 
 ```php
 $lf = new LinkFinder(["shorten_long_urls" => false]);
+```
+
+If you need to shorten a long URL to a different length, you can use the `shortened_url_max_length` option.
+
+```php
+$lf = new LinkFinder(["shortened_url_max_length" => 50]);
 ```
 
 #### href_callback
@@ -162,7 +168,7 @@ Just use the Composer:
 Testing
 -------
 
-The LinkFinder is tested automatically using Travis CI in PHP 5.6 to PHP 8.5.
+The LinkFinder is tested automatically using GitHub Actions in PHP 5.6 to PHP 8.5.
 
 For the tests execution, the package [atk14/tester](https://packagist.org/packages/atk14/tester) is used. It is just a wrapping script for [phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit).
 
