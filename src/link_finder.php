@@ -255,8 +255,6 @@ class LinkFinder{
 	protected function _renderTemplate($template,$attrs,$replaces,$href_callback){
 		ksort($attrs);
 
-		$h = function($value){ return htmlspecialchars($value,ENT_QUOTES); };
-
 		$_attrs = array();
 		foreach($attrs as $key => $value){
 			if($key=="href"){
@@ -271,7 +269,7 @@ class LinkFinder{
 			$safe_key = preg_replace('/[^a-zA-Z0-9_-]/', '', $key);
 			if ($safe_key === "") { continue; }
 
-			$_attrs[] = sprintf('%s="%s"',$safe_key,$h($value));
+			$_attrs[] = sprintf('%s="%s"',$safe_key,$this->_h($value));
 		}
 		$attrs_str = join(" ",$_attrs);
 
@@ -283,14 +281,14 @@ class LinkFinder{
 		//	<a href="%href%"%class%%target%>%url%</a>
 		//	<a href="mailto:%mailto%"%class%>%address%</a>
 		//
-		$replaces["%href%"] = $h($attrs["href"]);
+		$replaces["%href%"] = $this->_h($attrs["href"]);
 		$replaces["%target%"] = "";
 		if(isset($attrs["target"]) && strlen($attrs["target"])){
-			$replaces["%target%"] = " target=\"".$h($attrs["target"])."\"";
+			$replaces["%target%"] = " target=\"".$this->_h($attrs["target"])."\"";
 		}
 		$replaces["%class%"] = "";
 		if(isset($attrs["class"]) && strlen($attrs["class"])){
-			$replaces["%class%"] = " class=\"".$h($attrs["class"])."\"";
+			$replaces["%class%"] = " class=\"".$this->_h($attrs["class"])."\"";
 		}
 
 		$out = strtr($out,$replaces);
@@ -414,18 +412,21 @@ class LinkFinder{
 	}
 
 	protected function _shortenUrl($url){
-		$options = $this->_getOptions();
+		$options = $this->__options;
 		$max_length = $options["shortened_url_max_length"];
+
+		$url = htmlspecialchars_decode($url);
+
 		if(strlen($url)<=$max_length){
-			return $url;
+			return $this->_h($url);
 		}
 		if(!preg_match('/^(?<proto>((ftp|https?):\/\/)|)(?<domain>[^\/]+)(?<uri>\/.*|)$/i',$url,$matches)){
 			// Actually, this should not happen. $url should be a valid URL and the pattern should catch them all.
-			return $url;
+			return $this->_h($url);
 		}
 
 		if(strlen($matches["uri"])<10){
-			return $url;
+			return $this->_h($url);
 		}
 
 		$out = $matches["proto"].$matches["domain"];
@@ -433,6 +434,10 @@ class LinkFinder{
 		if($length<5){ $length = 5; }
 		$out = $out.substr($matches["uri"],0,$length)."...";
 
-		return $out;
+		return $this->_h($out);
+	}
+
+	protected function _h($value){
+		return htmlspecialchars($value,ENT_QUOTES);
 	}
 }
