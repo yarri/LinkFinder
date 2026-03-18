@@ -86,6 +86,8 @@ class LinkFinder{
 		if(!self::$top_level_domains){
 			self::$top_level_domains = require(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.php");
 		}
+
+		$this->__rnd = uniqid();
 	}
 
 	function setToOpenLinkInNewWindow($set = true){ $this->_setOption("open_links_in_new_windows",(bool)$set); }
@@ -210,7 +212,7 @@ class LinkFinder{
 	}
 
 	protected function _prepareTextTrTable($text,$options){
-		$rnd = uniqid();
+		$rnd = $this->__rnd;
 
 		$tr_table = array(
 			"&lt;" => " .._XltX{$rnd}_.. ",
@@ -407,8 +409,6 @@ class LinkFinder{
 	}
 
 	protected function _getNewReplaceKey(){
-		if(!$this->__rnd){ $this->__rnd = uniqid(); }
-
 		$this->__counter++;
 		return " Xreplace.{$this->__rnd}.{$this->__counter}X ";
 	}
