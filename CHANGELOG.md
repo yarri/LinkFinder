@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.8.1] 2026-03-18
+
+* 0cb453e - The shortened_url_max_length option has been added; the default value is 65
+
 ## [2.8] 2026-03-15
 
 * e4f451e - Added href_callback option
