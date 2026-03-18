@@ -149,7 +149,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 	}
 
 	function testLegacyUsage(){
-		$src = '<em>Lorem</em> www.ipsum.com. dolor@sit.net. Thank you';
+		$src = '<em>Lorem</em> www.ipsum.com/?p1=a&amp;p2=b. dolor@sit.net. Thank you';
 
 		$lfinder = new LinkFinder(array(
 			"open_links_in_new_windows" => true,
@@ -164,7 +164,13 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 			"prefer_https" => false,
 		));
 		$this->assertEquals(
-			'<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			'<em>Lorem</em> <a href="http://www.ipsum.com/?p1=a&amp;p2=b" class="link" target="_blank">www.ipsum.com/?p1=a&amp;p2=b</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			$lfinder->process($src)
+		);
+
+		$lfinder->setLinkClass("link amp&? \"");
+		$this->assertEquals(
+			'<em>Lorem</em> <a href="http://www.ipsum.com/?p1=a&amp;p2=b" class="link amp&amp;? &quot;" target="_blank">www.ipsum.com/?p1=a&amp;p2=b</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
 			$lfinder->process($src)
 		);
 
@@ -172,17 +178,17 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$lfinder->setLinkClass("external-link");
 
 		$this->assertEquals(
-			'<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			'<em>Lorem</em> <a href="http://www.ipsum.com/?p1=a&amp;p2=b" class="external-link">www.ipsum.com/?p1=a&amp;p2=b</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
 			$lfinder->process($src)
 		);
 
 		$this->assertEquals(
-			'&lt;em&gt;Lorem&lt;/em&gt; <a href="http://www.ipsum.com" class="article-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="article-email">dolor@sit.net</a>. Thank you',
+			'&lt;em&gt;Lorem&lt;/em&gt; <a href="http://www.ipsum.com/?p1=a&amp;amp;p2=b" class="article-link">www.ipsum.com/?p1=a&amp;amp;p2=b</a>. <a href="mailto:dolor@sit.net" class="article-email">dolor@sit.net</a>. Thank you',
 			$lfinder->process($src,array("link_class" => "article-link", "mailto_class" => "article-email", "escape_html_entities" => true))
 		);
 
 		$this->assertEquals(
-			'<em>Lorem</em> <a href="http://www.ipsum.com" class="external-link">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
+			'<em>Lorem</em> <a href="http://www.ipsum.com/?p1=a&amp;p2=b" class="external-link">www.ipsum.com/?p1=a&amp;p2=b</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',
 			$lfinder->process($src)
 		);
 
@@ -198,7 +204,7 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 
 			"prefer_https" => false,
 		));
-		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com" class="link" target="_blank">www.ipsum.com</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lfinder->process($src));
+		$this->assertEquals('<em>Lorem</em> <a href="http://www.ipsum.com/?p1=a&amp;p2=b" class="link" target="_blank">www.ipsum.com/?p1=a&amp;p2=b</a>. <a href="mailto:dolor@sit.net" class="email">dolor@sit.net</a>. Thank you',$lfinder->process($src));
 	}
 
 	function testLinksInBrackets(){

@@ -254,6 +254,8 @@ class LinkFinder{
 	protected function _renderTemplate($template,$attrs,$replaces,$href_callback){
 		ksort($attrs);
 
+		$h = function($value){ return htmlspecialchars($value,ENT_QUOTES); };
+
 		$_attrs = array();
 		foreach($attrs as $key => $value){
 			if($key=="href"){
@@ -261,13 +263,14 @@ class LinkFinder{
 				if($href_callback){
 					$value = $href_callback($value);
 				}
+				$attrs["href"] = $value;
 			}
 
 			// A valid HTML attribute name may contain only letters, numbers, hyphens, and underscores
 			$safe_key = preg_replace('/[^a-zA-Z0-9_-]/', '', $key);
 			if ($safe_key === "") { continue; }
 
-			$_attrs[] = sprintf('%s="%s"',$safe_key,htmlspecialchars($value,ENT_QUOTES));
+			$_attrs[] = sprintf('%s="%s"',$safe_key,$h($value));
 		}
 		$attrs_str = join(" ",$_attrs);
 
@@ -279,14 +282,14 @@ class LinkFinder{
 		//	<a href="%href%"%class%%target%>%url%</a>
 		//	<a href="mailto:%mailto%"%class%>%address%</a>
 		//
-		$replaces["%href%"] = $attrs["href"];
+		$replaces["%href%"] = $h($attrs["href"]);
 		$replaces["%target%"] = "";
 		if(isset($attrs["target"]) && strlen($attrs["target"])){
-			$replaces["%target%"] = " target=\"$attrs[target]\"";
+			$replaces["%target%"] = " target=\"".$h($attrs["target"])."\"";
 		}
 		$replaces["%class%"] = "";
 		if(isset($attrs["class"]) && strlen($attrs["class"])){
-			$replaces["%class%"] = " class=\"$attrs[class]\"";
+			$replaces["%class%"] = " class=\"".$h($attrs["class"])."\"";
 		}
 
 		$out = strtr($out,$replaces);
