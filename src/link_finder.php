@@ -56,7 +56,7 @@ class LinkFinder{
 		"mailto_callback" => null, // e.g. function($email){ return "/compose_email.php?for=".urlencode($email); }
 	);
 
-	protected static $top_level_domains; // will read from tlds.php
+	protected static $top_level_domains = null; // will contain data from the tlds.php file
 
 	// Private stuff
 	protected	$__attrs;
@@ -83,7 +83,7 @@ class LinkFinder{
 
 		$this->_setOptions($options);
 
-		if(!self::$top_level_domains){
+		if(self::$top_level_domains === null){
 			self::$top_level_domains = require(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.php");
 		}
 
@@ -230,10 +230,18 @@ class LinkFinder{
 			return $tr_table;
 		}
 
-		// building replacements for existing links (<a>...</a>)
-		preg_match_all('/(<a(|\s[^<>]*)\/?>.*?<\/a>)/si',$text,$matches);
-		foreach($matches[1] as $i => $match){
-			$tr_table[$match] = " _XatagX{$rnd}.{$i}_ "; // 'Click <a>here</a>' -> 'Click  _XatagX1234_ '
+		// building replacements for existing links and some other critical tags (<a>...</a>, <script>...</script>, <textarea>...</textarea>)
+		foreach([
+			"script",
+			"textarea",
+			"style",
+			"head",
+			"a"
+		] as $tag){
+			preg_match_all('/(<'.$tag.'(|\s[^<>]*)\/?>.*?<\/'.$tag.'>)/si',$text,$matches);
+			foreach($matches[1] as $i => $match){
+				$tr_table[$match] = " _X{$tag}tagX{$rnd}.{$i}_ "; // 'Click <a>here</a>' -> 'Click  _XatagX1234_ '
+			}
 		}
 
 		if($options["avoid_headlines"]){

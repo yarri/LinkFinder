@@ -148,6 +148,75 @@ or <a href="mailto:we@earth.net">we@earth.net</a></p>',$lfinder->process($src,ar
 		$this->assertEquals('&lt;h1&gt;<a href="http://WWW.PROJECT.COM">WWW.PROJECT.COM</a>&lt;/h1&gt;&lt;p&gt;Welcome at <a href="http://www.project.com">www.project.com</a>!&lt;/p&gt;',$lfinder->process($src,array("avoid_headlines" => false)));
 	}
 
+	function test_avoid_some_critical_tags(){
+		$src = '
+			<html>
+				<head>
+					<title>Welcome at www.example.com</title>
+				</head>
+				<body>
+					<style>
+						@font-face {
+							font-family: "YourFontName";
+							src: url("http://domain.example/fonts/font.ttf");
+						}
+						p {
+							font-family: "YourFontName";
+						}
+					</style>
+					<p id="p">Visit us at www.example.com!</p>
+					<textarea>
+						https://another.example.com/
+					</textarea>
+					<script>
+							// heavily inspired at https://stackoverflow.com/questions/22948755/onclick-attribute-for-p-tags
+							var p;
+							p = document.getElementById("p");
+							function changeColor()
+							{
+								p.style.color="blue";
+							}
+							p.onclick = changeColor()
+					</script>
+				</body>
+			</html>
+		';
+
+		$lfinder = new LinkFinder();
+		$this->assertEquals('
+			<html>
+				<head>
+					<title>Welcome at www.example.com</title>
+				</head>
+				<body>
+					<style>
+						@font-face {
+							font-family: "YourFontName";
+							src: url("http://domain.example/fonts/font.ttf");
+						}
+						p {
+							font-family: "YourFontName";
+						}
+					</style>
+					<p id="p">Visit us at <a href="https://www.example.com">www.example.com</a>!</p>
+					<textarea>
+						https://another.example.com/
+					</textarea>
+					<script>
+							// heavily inspired at https://stackoverflow.com/questions/22948755/onclick-attribute-for-p-tags
+							var p;
+							p = document.getElementById("p");
+							function changeColor()
+							{
+								p.style.color="blue";
+							}
+							p.onclick = changeColor()
+					</script>
+				</body>
+			</html>
+		',$lfinder->processHtml($src));
+	}
+
 	function testLegacyUsage(){
 		$src = '<em>Lorem</em> www.ipsum.com/?p1=a&amp;p2=b. dolor@sit.net. Thank you';
 
