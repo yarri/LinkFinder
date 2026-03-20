@@ -148,26 +148,26 @@ class LinkFinder{
 		$password_chars = $username_chars;
 
 		// urls starting with http://, https://, ftp:/ and containing username and password
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$username_chars:$password_chars@$domain_name_part(?>\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 		if(strlen($text)==0){
 			// perhaps there is an invalid UTF-8 char in $text
 			return $text_orig;
 		}
 
 		// urls starting with http://, https://, ftp:/
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(ftp|https?):\\/\\/$domain_name_part(?>\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 
 		// urls starting with www.
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>www\.$domain_name_part(\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>www\.$domain_name_part(?>\.$domain_name_part)*$optional_port$uri)","_replaceLink",$text,$options);
 
 		// urls without leading www., http://, ... and with something in URI part which may look like an email address (e.g. mill.cz/_cs/mailing/online/test@example.com/afb359b921a75f8a90fa6a5c0ffb5671/000001.htm)
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$tld\\b$optional_port$not_empty_uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(?>$domain_name_part\\.)+$tld\\b$optional_port$not_empty_uri)","_replaceLink",$text,$options);
 
 		// emails
-		$text = $this->_pregReplaceCallback("(?<address>[_.0-9a-z-]+@([0-9a-z][0-9a-z-]+\\.)+$tld)(?<ending_interrupter>.?)","_replaceEmail",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<address>[_.0-9a-z-]+@(?>[0-9a-z][0-9a-z-]+\\.)+$tld)(?<ending_interrupter>.?)","_replaceEmail",$text,$options);
 
 		// urls without leading www., http://, ...
-		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>($domain_name_part\\.)+$tld\\b$optional_port$uri)","_replaceLink",$text,$options);
+		$text = $this->_pregReplaceCallback("(?<first_char>.?)\b(?<link>(?>$domain_name_part\\.)+$tld\\b$optional_port$uri)","_replaceLink",$text,$options);
 
 		$text = strtr($text,$this->__replaces);
 
