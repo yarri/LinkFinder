@@ -69,7 +69,7 @@ class LinkFinder{
 
 	function __construct($options = array()){
 		if(!isset($options["secured_websites"]) && isset($_SERVER) && isset($_SERVER["HTTP_HOST"]) && isset($_SERVER["HTTPS"])){
-			if($_SERVER["HTTPS"]==="on"){
+			if((string)$_SERVER["HTTPS"]==="on"){
 				$http_host = (string)$_SERVER["HTTP_HOST"];
 				$options["secured_websites"] = array();
 				$options["secured_websites"][] = $http_host;
