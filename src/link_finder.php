@@ -83,8 +83,8 @@ class LinkFinder{
 
 		$this->_setOptions($options);
 
-		if(self::$top_level_domains === null){
-			self::$top_level_domains = require(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.php");
+		if(static::$top_level_domains === null){
+			static::$top_level_domains = require(__DIR__ . DIRECTORY_SEPARATOR .  "tlds.php");
 		}
 
 		$this->__rnd = uniqid();
@@ -341,7 +341,7 @@ class LinkFinder{
 		$leading_parenthesis = $matches["leading_parenthesis"];
 		$ending_parenthesis = $matches["ending_parenthesis"];
 
-		if(isset($matches["tld"]) && !in_array(strtolower($matches["tld"]),self::$top_level_domains)){
+		if(isset($matches["tld"]) && !in_array(strtolower($matches["tld"]),static::$top_level_domains)){
 			return $matches[0];
 		}
 
@@ -393,7 +393,7 @@ class LinkFinder{
 		$leading_parenthesis = $matches["leading_parenthesis"];
 		$ending_parenthesis = $matches["ending_parenthesis"];
 
-		if(isset($matches["tld"]) && !in_array(strtolower($matches["tld"]),self::$top_level_domains)){
+		if(isset($matches["tld"]) && !in_array(strtolower($matches["tld"]),static::$top_level_domains)){
 			return $matches[0];
 		}
 
