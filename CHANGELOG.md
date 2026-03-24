@@ -3,6 +3,10 @@ All notable changes to LinkFinder will be documented in this file.
 
 ## [Unreleased]
 
+## [2.8.2] 2026-03-24
+
+* 84ec8db - Link replacement is not performed within certain important tags, such as `<script>` and `<style>`
+
 ## [2.8.1] 2026-03-18
 
 * 0cb453e - The shortened_url_max_length option has been added; the default value is 65
