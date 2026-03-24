@@ -5,185 +5,230 @@ LinkFinder
 [![Downloads](https://img.shields.io/packagist/dt/yarri/link-finder.svg)](https://packagist.org/packages/yarri/link-finder)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/63b456d41b7c4232b3f96fe4b5da8be7)](https://app.codacy.com/gh/yarri/LinkFinder/dashboard)
 
-In a plain text document the LinkFinder searches for URLs and email addresses and makes them clickable, in a HTML document searches for missing links and makes them clickable too.
+LinkFinder detects URLs and email addresses in plain text or HTML and wraps them in `<a>` tags. In HTML documents it only linkifies text that is not already linked.
 
-Usage
------
+- [Installation](#installation)
+- [Basic usage](#basic-usage)
+- [Processing HTML](#processing-html)
+- [Options reference](#options-reference)
+- [Callbacks](#callbacks)
+- [Custom templates](#custom-templates)
+- [Testing](#testing)
+
+Installation
+------------
+
+```bash
+composer require yarri/link-finder
+```
+
+Basic usage
+-----------
+
+Pass plain text to `process()`. URLs and email addresses are detected automatically.
 
 ```php
-$text = '
-  Welcome at www.example.com!
-  Contact us on info@example.com.
-';
-
 $lf = new LinkFinder();
-echo $lf->process($text);
 
-// Welcome at <a href="https://www.example.com/">www.example.com</a>!
+echo $lf->process('Welcome at www.example.com!');
+// Welcome at <a href="https://www.example.com">www.example.com</a>!
+
+echo $lf->process('Contact us on info@example.com.');
 // Contact us on <a href="mailto:info@example.com">info@example.com</a>.
 ```
 
-Extra attributes for ```<a>``` and ```<a href="mailto:...">``` elements can be specified in options:
+HTML entities in the input are escaped by default, so plain text containing `<`, `>`, or `&` is safe to pass directly:
+
+```php
+echo $lf->process('Find more at <http://www.ourstore.com/>');
+// Find more at &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;
+```
+
+Extra attributes can be set on the generated `<a>` elements via the `attrs` and `mailto_attrs` options:
 
 ```php
 $lf = new LinkFinder([
-  "attrs" => ["class" => "external-link", "target" => "_blank", "rel" => "nofollow"],
-  "mailto_attrs" => ["class" => "external-email"]
+  "attrs" => [
+    "class"  => "external-link",
+    "target" => "_blank",
+    "rel"    => "nofollow",
+  ],
+  "mailto_attrs" => [
+    "class" => "external-email",
+  ],
 ]);
-echo $lf->process($text);
 
-// Welcome at <a class="external-link" href="https://www.example.com/" target="_blank" rel="nofollow">www.example.com</a>!
+echo $lf->process('Welcome at www.example.com! Contact us on info@example.com.');
+// Welcome at <a class="external-link" href="https://www.example.com" rel="nofollow" target="_blank">www.example.com</a>!
 // Contact us on <a class="external-email" href="mailto:info@example.com">info@example.com</a>.
 ```
 
-Escaping of HTML entities is enabled by default:
+Processing HTML
+---------------
+
+Use `processHtml()` when the input is an HTML document. LinkFinder will skip content inside existing `<a>`, `<script>`, `<style>`, `<textarea>`, and `<head>` tags, and will only linkify bare URLs and emails in the visible text.
 
 ```php
-$text = '
-  Find more at
-  <http://www.ourstore.com/>
-';
-
-$lf = new LinkFinder();
-echo $lf->process($text);
-
-// Find more at
-// &lt;<a href="http://www.ourstore.com/">http://www.ourstore.com/</a>&gt;
-```
-
-Creating missing links on URLs or emails in a HTML document:
-
-```php
-$html_document = '
+$html = '
   <p>
     Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or Prague.eu.
   </p>
 ';
 
 $lf = new LinkFinder();
-echo $lf->processHtml($html_document);
+echo $lf->processHtml($html);
 
 // <p>
 //   Visit <a href="http://www.ckrumlov.info/">Cesky Krumlov</a> or <a href="https://Prague.eu">Prague.eu</a>.
 // </p>
 ```
 
-Method `$lf->processHtml()` is actually an alias for `$lf->process($html_document,["escape_html_entities" => false])`.
+`processHtml()` is equivalent to calling `process($html, ["escape_html_entities" => false])`.
 
-In case of processing a HTML text, the LinkFinder doesn't create links in headlines (`<h1>`, `<h2>`, ...) by default. It can be overridden by the option avoid_headlines:
+By default, URLs inside headline elements (`<h1>` through `<h6>`) are left alone. To linkify them as well:
 
 ```php
-echo $lf->processHtml($html_document,["avoid_headlines" => false]);
+echo $lf->processHtml($html, ["avoid_headlines" => false]);
 
-// or
-
+// or permanently via the constructor:
 $lf = new LinkFinder(["avoid_headlines" => false]);
-echo $lf->processHtml($html_document);
 ```
 
-If no protocol is specified in a future link (e.g. `www.example.com`), should LinkFinder prefer https over http? It can be set by the option `prefer_https`. The default value is true. There is also a constant `LINK_FINDER_PREFER_HTTPS` to change the default behaviour in the global scope.
+Options reference
+-----------------
 
-If `prefer_https` is set to false, a list of secured websites can be specified in the option `secured_websites`:
+All options can be passed to the constructor or as the second argument of `process()` / `processHtml()`. Options passed to a method override the constructor defaults for that call only.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `attrs` | array | `[]` | HTML attributes added to every link `<a>` element. |
+| `mailto_attrs` | array | `[]` | HTML attributes added to every mailto `<a>` element. |
+| `escape_html_entities` | bool | `true` | Escape `<`, `>`, `&`, `"` in the input before processing. Disable when the input is already HTML. |
+| `avoid_headlines` | bool | `true` | Skip linkification inside `<h1>`–`<h6>` elements when processing HTML. |
+| `prefer_https` | bool | `true` | Use `https://` when no protocol is specified (e.g. `www.example.com`). Can also be set globally via the `LINK_FINDER_PREFER_HTTPS` constant before the class is loaded. |
+| `secured_websites` | array | `[]` | When `prefer_https` is `false`, list domains that should still get `https://`. Populated automatically from `$_SERVER["HTTP_HOST"]` when the current request is over HTTPS. |
+| `shorten_long_urls` | bool | `true` | Truncate the visible link text for long URLs. The `href` is never shortened. |
+| `shortened_url_max_length` | int | `65` | Maximum character length of the visible link text before truncation. |
+| `href_callback` | callable | identity | Transform the URL before it is written into the `href` attribute. See [Callbacks](#callbacks). |
+| `mailto_callback` | callable | `"mailto:$email"` | Transform an email address before it is written into the `href` attribute. See [Callbacks](#callbacks). |
+| `link_template` | string | `<a %attrs%>%url%</a>` | Template for link elements. See [Custom templates](#custom-templates). |
+| `mailto_template` | string | `<a %attrs%>%address%</a>` | Template for mailto elements. See [Custom templates](#custom-templates). |
+| `utf8` | bool | `true` | Treat the input as UTF-8. |
+
+### prefer_https and secured_websites
+
+When `prefer_https` is `true` (the default), all bare URLs get `https://`. When it is `false`, you can still mark specific domains as secured:
 
 ```php
 $lf = new LinkFinder([
-  "prefer_https" => false,
-  "secured_websites" => [
-    "example.com",
-    "webmail.example.com"
-  ]
+  "prefer_https"     => false,
+  "secured_websites" => ["example.com", "webmail.example.com"],
 ]);
-echo $lf->process('Please, sign in at example.com/login/ or webmail.example.com');
 
-// Please, sign in at <a href="https://example.com/login/">example.com/login/</a> or <a href="https://webmail.example.com">webmail.example.com</a>
+echo $lf->process('Sign in at example.com/login/ or visit plain.org.');
+// Sign in at <a href="https://example.com/login/">example.com/login/</a> or visit <a href="http://plain.org">plain.org</a>.
 ```
 
-If the secured_websites option is omitted and https protocol is active, the current HTTP host (```$_SERVER["HTTP_HOST"]```) will be added automatically.
+When `prefer_https` is `false` and `secured_websites` is not set, LinkFinder automatically adds the current `$_SERVER["HTTP_HOST"]` (and its `www.` variant) if the request is served over HTTPS.
 
-#### Long URLs shortening
+### Long URL shortening
 
-Long URLs are automatically shortened to a maximum of 65 characters. For example, the following URL:
-
-```
-https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/
-```
-
-will be converted to:
-
-```
-<a href="https://venturebeat.com/2018/05/01/donkey-kong-country-tropical-freeze-review-a-funky-fresh-switch-update/">https://venturebeat.com/2018/05/01/donkey-kong-country-tropica...</a>
-```
-
-If the shortening is not desired behaviour, option shorten_long_urls should be set to false:
+The visible link text is truncated at 65 characters by default. The `href` always contains the full URL.
 
 ```php
+// Disable shortening
 $lf = new LinkFinder(["shorten_long_urls" => false]);
-```
 
-If you need to shorten a long URL to a different length, you can use the `shortened_url_max_length` option.
-
-```php
+// Change the limit
 $lf = new LinkFinder(["shortened_url_max_length" => 50]);
 ```
 
-#### href_callback
+Callbacks
+---------
 
-You can use the href_callback option to customize the format of the href value.
+### href_callback
 
-```php
-$lf = new LinkFinder([
-  "href_callback" => function($url){ return "https://redirect.example.com/?url=".urlencode($url); }
-]);
-
-echo $lf->process('www.atk14.net'); // <a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
-```
-
-Default value of the href_callback is `function($url){ return $url; }`
-
-The href_callback can be also set using method `$lf->setHrefCallback($callback)`
-
-#### mailto_callback
-
-You can also specify the mailto_callback option to customize the format of the href value when it contains an email address.
+Runs on every detected URL just before it is written into the `href` attribute. Use it to route all external links through a redirect proxy, or to rewrite URLs in any other way.
 
 ```php
 $lf = new LinkFinder([
-  "mailto_callback" => function($email){ return "/compose_message.php?to=".urlencode($email); }
+  "href_callback" => function ($url) {
+    return "https://redirect.example.com/?url=" . urlencode($url);
+  },
 ]);
 
-echo $lf->process('info@example.com'); // <a href="/compose_message.php?to=info%40example.com">info@example.com</a>
+echo $lf->process('www.atk14.net');
+// <a href="https://redirect.example.com/?url=https%3A%2F%2Fwww.atk14.net">www.atk14.net</a>
 ```
 
-Default value of the mailto_callback is `function($email){ return "mailto:$email"; }`
+The callback can also be set after construction:
 
-The mailto_callback can be also set using method `$lf->setMailtoCallback($callback)`
+```php
+$lf->setHrefCallback(function ($url) { /* … */ });
+```
 
-Installation
-------------
+Default: `function($url){ return $url; }`
 
-Just use the Composer:
+### mailto_callback
 
-    composer require yarri/link-finder
+Runs on every detected email address before it is written into the `href` attribute. Use it to point email links at a webmail compose page instead of a `mailto:` URI.
+
+```php
+$lf = new LinkFinder([
+  "mailto_callback" => function ($email) {
+    return "/compose.php?to=" . urlencode($email);
+  },
+]);
+
+echo $lf->process('info@example.com');
+// <a href="/compose.php?to=info%40example.com">info@example.com</a>
+```
+
+The callback can also be set after construction:
+
+```php
+$lf->setMailtoCallback(function ($email) { /* … */ });
+```
+
+Default: `function($email){ return "mailto:$email"; }`
+
+Custom templates
+----------------
+
+The `link_template` and `mailto_template` options let you replace the entire `<a>` element with your own markup. The placeholder `%attrs%` is replaced with all rendered HTML attributes; `%url%` and `%address%` are replaced with the visible link text.
+
+```php
+$lf = new LinkFinder([
+  "link_template" => '<span class="link-wrapper"><a %attrs% data-external="1">%url%</a></span>',
+]);
+
+echo $lf->process('www.example.com');
+// <span class="link-wrapper"><a href="https://www.example.com" data-external="1">www.example.com</a></span>
+```
 
 Testing
 -------
 
-The LinkFinder is tested automatically using GitHub Actions in PHP 5.6 to PHP 8.5.
+LinkFinder is tested automatically via GitHub Actions across PHP 5.6 to PHP 8.5.
 
-For the tests execution, the package [atk14/tester](https://packagist.org/packages/atk14/tester) is used. It is just a wrapping script for [phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit).
+Tests use the [atk14/tester](https://packagist.org/packages/atk14/tester) wrapper for [phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit).
 
-Install required dependencies for development:
+Install development dependencies:
 
-    composer update --dev
+```bash
+composer update --dev
+```
 
-Run tests:
+Run the test suite:
 
-    cd test
-    ../vendor/bin/run_unit_tests
+```bash
+cd test
+../vendor/bin/run_unit_tests
+```
 
 License
 -------
 
-LinkFinder is free software distributed [under the terms of the MIT license](http://www.opensource.org/licenses/mit-license)
+LinkFinder is free software distributed [under the terms of the MIT license](http://www.opensource.org/licenses/mit-license).
 
 [//]: # ( vim: set ts=2 et: )
