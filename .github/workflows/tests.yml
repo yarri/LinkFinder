@@ -38,7 +38,7 @@ jobs:
           tools: composer
 
       - name: Install dependencies
-        run: composer update --dev
+        run: composer update
 
       - name: Run tests
         run: cd test && ../vendor/bin/run_unit_tests
