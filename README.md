@@ -14,6 +14,7 @@ LinkFinder detects URLs and email addresses in plain text or HTML and wraps them
 - [Callbacks](#callbacks)
 - [Custom templates](#custom-templates)
 - [Testing](#testing)
+- [License](#license)
 
 Installation
 ------------
